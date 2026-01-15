@@ -3,48 +3,48 @@
 ## Track Overview
 - **Track ID:** chick_profiles_20260115
 - **Type:** Feature
-- **Status:** Not Started
+- **Status:** In Progress
 
 ---
 
-## Phase 1: Data Model & API Foundation
+## Phase 1: Data Model & API Foundation ✅
 
 ### Objective
 Extend the database schema to support chick profiles, photos, and notes. Create the core API endpoints.
 
-- [ ] Task: Add Chick model to Prisma schema
-    - [ ] Define Chick model with fields: id, flockId, name, breed, hatchDate, description, photoUrl
-    - [ ] Add relation to Flock model
-    - [ ] Run migration
-    - [ ] Create Chick service functions (src/lib/services/chicks.ts)
+- [x] Task: Add Chick model to Prisma schema
+    - [x] Define Chick model with fields: id, flockId, name, breed, hatchDate, description, photoUrl
+    - [x] Add relation to Flock model
+    - [x] Run migration (prisma generate)
+    - [x] Create Chick service functions (src/lib/services/chicks.ts)
 
-- [ ] Task: Add ChickPhoto model to Prisma schema
-    - [ ] Define ChickPhoto model with fields: id, chickId, imageUrl, thumbnailUrl, takenAt, weekNumber
-    - [ ] Add relation to Chick model
-    - [ ] Run migration
-    - [ ] Create ChickPhoto service functions
+- [x] Task: Add ChickPhoto model to Prisma schema
+    - [x] Define ChickPhoto model with fields: id, chickId, imageUrl, thumbnailUrl, takenAt, weekNumber
+    - [x] Add relation to Chick model
+    - [x] Run migration
+    - [x] Create ChickPhoto service functions
 
-- [ ] Task: Add ChickNote model to Prisma schema
-    - [ ] Define ChickNote model with fields: id, chickId, content, weekNumber
-    - [ ] Add relation to Chick model
-    - [ ] Run migration
-    - [ ] Create ChickNote service functions
+- [x] Task: Add ChickNote model to Prisma schema
+    - [x] Define ChickNote model with fields: id, chickId, content, weekNumber
+    - [x] Add relation to Chick model
+    - [x] Run migration
+    - [x] Create ChickNote service functions
 
-- [ ] Task: Create Chick API endpoints
-    - [ ] Write tests for chick CRUD operations
-    - [ ] POST /api/flocks/[flockId]/chicks - Create chick
-    - [ ] GET /api/flocks/[flockId]/chicks - List chicks
-    - [ ] GET /api/flocks/[flockId]/chicks/[chickId] - Get chick with photos/notes
-    - [ ] PATCH /api/flocks/[flockId]/chicks/[chickId] - Update chick
-    - [ ] DELETE /api/flocks/[flockId]/chicks/[chickId] - Delete chick
+- [x] Task: Create Chick API endpoints
+    - [x] Write tests for chick CRUD operations (19 tests)
+    - [x] POST /api/flocks/[flockId]/chicks - Create chick
+    - [x] GET /api/flocks/[flockId]/chicks - List chicks
+    - [x] GET /api/flocks/[flockId]/chicks/[chickId] - Get chick with photos/notes
+    - [x] PATCH /api/flocks/[flockId]/chicks/[chickId] - Update chick
+    - [x] DELETE /api/flocks/[flockId]/chicks/[chickId] - Delete chick
 
-- [ ] Task: Create Notes API endpoints
-    - [ ] Write tests for notes CRUD operations
-    - [ ] POST /api/flocks/[flockId]/chicks/[chickId]/notes - Add note
-    - [ ] PATCH /api/flocks/[flockId]/chicks/[chickId]/notes/[noteId] - Update note
-    - [ ] DELETE /api/flocks/[flockId]/chicks/[chickId]/notes/[noteId] - Delete note
+- [x] Task: Create Notes API endpoints
+    - [x] Write tests for notes CRUD operations (included in 19 tests)
+    - [x] POST /api/flocks/[flockId]/chicks/[chickId]/notes - Add note
+    - [x] PATCH /api/flocks/[flockId]/chicks/[chickId]/notes/[noteId] - Update note
+    - [x] DELETE /api/flocks/[flockId]/chicks/[chickId]/notes/[noteId] - Delete note
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Data Model & API Foundation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Data Model & API Foundation' (Protocol in workflow.md)
 
 ---
 
