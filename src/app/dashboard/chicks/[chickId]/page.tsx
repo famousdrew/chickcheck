@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { findFlocksByUserId } from "@/lib/services/flocks";
 import { findChickById } from "@/lib/services/chicks";
 import Link from "next/link";
+import ChickProfile from "./ChickProfile";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,30 @@ export default async function ChickProfilePage({
     notFound();
   }
 
+  // Transform dates to strings for client component
+  const chickData = {
+    id: chick.id,
+    name: chick.name,
+    breed: chick.breed,
+    hatchDate: chick.hatchDate?.toISOString() ?? null,
+    description: chick.description,
+    photoUrl: chick.photoUrl,
+    flockId: chick.flockId,
+    photos: chick.photos.map((p) => ({
+      id: p.id,
+      imageUrl: p.imageUrl,
+      thumbnailUrl: p.thumbnailUrl,
+      takenAt: p.takenAt.toISOString(),
+      weekNumber: p.weekNumber,
+    })),
+    notes: chick.notes.map((n) => ({
+      id: n.id,
+      content: n.content,
+      weekNumber: n.weekNumber,
+      createdAt: n.createdAt.toISOString(),
+    })),
+  };
+
   return (
     <div className="bg-cream min-h-screen">
       <header className="border-wood-dark/10 border-b bg-white">
@@ -63,22 +88,7 @@ export default async function ChickProfilePage({
       </header>
 
       <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-rustic shadow-rustic bg-white p-6">
-          <div className="text-center">
-            <h2 className="font-display text-wood-dark text-xl font-bold">
-              {chick.name}
-            </h2>
-            {chick.breed && (
-              <p className="text-wood-dark/60 mt-1">{chick.breed}</p>
-            )}
-            {chick.description && (
-              <p className="text-wood-dark/70 mt-4">{chick.description}</p>
-            )}
-            <p className="text-wood-dark/50 mt-8 text-sm">
-              Photo upload and timeline coming soon...
-            </p>
-          </div>
-        </div>
+        <ChickProfile initialChick={chickData} flockId={chick.flockId} />
       </main>
     </div>
   );
