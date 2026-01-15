@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/services/users";
 
+export const dynamic = "force-dynamic";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 8;
 
