@@ -1,15 +1,22 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { findFlocksByUserId } from "@/lib/services/flocks";
 import SignOutButton from "./SignOutButton";
+import CreateFlockForm from "./CreateFlockForm";
+import FlockHeader from "./FlockHeader";
+import TaskList from "./TaskList";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
+
+  const flocks = await findFlocksByUserId(session.user.id);
+  const activeFlock = flocks[0]; // For now, just use the first flock
 
   return (
     <div className="bg-cream min-h-screen">
@@ -28,22 +35,22 @@ export default async function DashboardPage() {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-rustic shadow-rustic bg-white p-8">
-          <h2 className="font-display text-wood-dark text-xl font-bold">
-            Welcome to ChickCheck!
-          </h2>
-          <p className="text-wood-dark/70 mt-2">
-            Your chick-raising journey starts here. Soon you&apos;ll be able to
-            track your flock&apos;s progress through their first 8 weeks.
-          </p>
-
-          <div className="rounded-rustic bg-straw-400/20 mt-6 p-4">
-            <p className="text-wood-dark text-sm">
-              <strong>Coming soon:</strong> Create your first flock and start
-              tracking daily tasks, weekly milestones, and more!
-            </p>
+        {!activeFlock ? (
+          <CreateFlockForm />
+        ) : (
+          <div className="space-y-6">
+            <FlockHeader
+              flock={{
+                id: activeFlock.id,
+                name: activeFlock.name,
+                status: activeFlock.status,
+                startDate: activeFlock.startDate?.toISOString() ?? null,
+                currentWeek: activeFlock.currentWeek,
+              }}
+            />
+            <TaskList flockId={activeFlock.id} />
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
