@@ -1,8 +1,2 @@
 [phases.setup]
-nixPkgs = ["nodejs_20"]
-
-[phases.build]
-cmds = ["npm ci", "npx prisma generate", "npm run build"]
-
-[start]
-cmd = "npm run start"
+nixPkgs = ["nodejs_22"]
