@@ -5,6 +5,8 @@ import PhotoUpload from "./PhotoUpload";
 import PhotoGallery from "./PhotoGallery";
 import NotesList from "./NotesList";
 import ChickTimeline from "./ChickTimeline";
+import EditChickModal from "./EditChickModal";
+import DeleteChickButton from "./DeleteChickButton";
 
 interface Photo {
   id: string;
@@ -47,6 +49,7 @@ export default function ChickProfile({
   const [chick, setChick] = useState(initialChick);
   const [viewMode, setViewMode] = useState<ViewMode>("timeline");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const refreshChick = useCallback(async () => {
@@ -63,6 +66,11 @@ export default function ChickProfile({
 
   const handlePhotoUploaded = () => {
     setIsUploadOpen(false);
+    refreshChick();
+  };
+
+  const handleChickUpdated = () => {
+    setIsEditOpen(false);
     refreshChick();
   };
 
@@ -116,13 +124,30 @@ export default function ChickProfile({
 
           {/* Info */}
           <div className="flex-1">
-            <h2 className="font-display text-wood-dark text-2xl font-bold">
-              {chick.name}
-            </h2>
-            <div className="text-wood-dark/60 mt-1 flex flex-wrap items-center gap-2 text-sm">
-              {chick.breed && <span>{chick.breed}</span>}
-              {chick.breed && age && <span>•</span>}
-              {age && <span>{age}</span>}
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="font-display text-wood-dark text-2xl font-bold">
+                  {chick.name}
+                </h2>
+                <div className="text-wood-dark/60 mt-1 flex flex-wrap items-center gap-2 text-sm">
+                  {chick.breed && <span>{chick.breed}</span>}
+                  {chick.breed && age && <span>•</span>}
+                  {age && <span>{age}</span>}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsEditOpen(true)}
+                  className="text-wood-dark/60 hover:text-wood-dark text-sm font-medium transition-colors"
+                >
+                  Edit
+                </button>
+                <DeleteChickButton
+                  chickId={chick.id}
+                  chickName={chick.name}
+                  flockId={flockId}
+                />
+              </div>
             </div>
             {chick.description && (
               <p className="text-wood-dark/70 mt-2 text-sm">
@@ -289,6 +314,15 @@ export default function ChickProfile({
           </div>
         </div>
       )}
+
+      {/* Edit chick modal */}
+      <EditChickModal
+        chick={chick}
+        flockId={flockId}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onSuccess={handleChickUpdated}
+      />
     </div>
   );
 }

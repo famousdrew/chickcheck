@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { findFlockById } from "@/lib/services/flocks";
 import { findChickById, updateChick, deleteChick } from "@/lib/services/chicks";
+import { deleteChickPhotos } from "@/lib/utils/storage";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -147,9 +148,18 @@ export async function DELETE(
     );
   }
 
-  // Note: Photos will be cascade deleted from DB, but cloud storage cleanup
-  // should be handled separately (in Phase 2 with storage setup)
+  // Collect all photo URLs for cloud storage cleanup
+  const photoUrls = chick.photos.flatMap((p) => [p.imageUrl, p.thumbnailUrl]);
+
+  // Delete from database (cascade deletes photos and notes)
   await deleteChick(chickId);
+
+  // Clean up cloud storage (non-blocking, errors are logged but don't fail the request)
+  if (photoUrls.length > 0) {
+    deleteChickPhotos(photoUrls).catch((err) => {
+      console.error("Failed to clean up cloud storage:", err);
+    });
+  }
 
   return NextResponse.json({ success: true });
 }
