@@ -1,0 +1,13 @@
+Placeholder for app icons.
+
+Required icons:
+- icon-192.png (192x192)
+- icon-512.png (512x512)
+- icon-maskable-192.png (192x192, with safe zone padding)
+- icon-maskable-512.png (512x512, with safe zone padding)
+
+Colors to use:
+- Primary: #9E2A2B (barn red)
+- Background: #FEF8F0 (cream)
+
+Consider using a chick/chicken icon or checkmark with chick theme.

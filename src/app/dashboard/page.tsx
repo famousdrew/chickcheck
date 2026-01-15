@@ -5,6 +5,7 @@ import SignOutButton from "./SignOutButton";
 import CreateFlockForm from "./CreateFlockForm";
 import FlockHeader from "./FlockHeader";
 import TaskList from "./TaskList";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="bg-cream min-h-screen">
+      <OfflineIndicator />
       <header className="border-wood-dark/10 border-b bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <h1 className="font-display text-wood-dark text-2xl font-bold">
