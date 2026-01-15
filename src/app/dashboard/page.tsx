@@ -5,6 +5,7 @@ import SignOutButton from "./SignOutButton";
 import CreateFlockForm from "./CreateFlockForm";
 import FlockHeader from "./FlockHeader";
 import TaskList from "./TaskList";
+import ChickGallery from "./ChickGallery";
 import OfflineIndicator from "@/components/OfflineIndicator";
 
 export const dynamic = "force-dynamic";
@@ -51,6 +52,7 @@ export default async function DashboardPage() {
               }}
             />
             <TaskList flockId={activeFlock.id} />
+            <ChickGallery flockId={activeFlock.id} />
           </div>
         )}
       </main>
