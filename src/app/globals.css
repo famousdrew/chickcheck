@@ -1,17 +1,63 @@
-/* Tailwind will be configured in the next task */
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@import "tailwindcss";
+
+/* Custom theme configuration using Tailwind v4 CSS variables */
+@theme {
+  /* Rustic Farmhouse Color Palette */
+  --color-barn-50: #fdf8f6;
+  --color-barn-100: #f9ede8;
+  --color-barn-200: #f3d9cf;
+  --color-barn-300: #e9bfad;
+  --color-barn-400: #db9a7f;
+  --color-barn-500: #c97856;
+  --color-barn-600: #b85f3d;
+  --color-barn-700: #9a4d32;
+  --color-barn-800: #7f412d;
+  --color-barn-900: #6a3829;
+
+  --color-straw-50: #fefce8;
+  --color-straw-100: #fef9c3;
+  --color-straw-200: #fef08a;
+  --color-straw-300: #fde047;
+  --color-straw-400: #facc15;
+  --color-straw-500: #eab308;
+  --color-straw-600: #ca8a04;
+  --color-straw-700: #a16207;
+  --color-straw-800: #854d0e;
+  --color-straw-900: #713f12;
+
+  --color-grass-50: #f0fdf4;
+  --color-grass-100: #dcfce7;
+  --color-grass-200: #bbf7d0;
+  --color-grass-300: #86efac;
+  --color-grass-400: #4ade80;
+  --color-grass-500: #5D8A48;
+  --color-grass-600: #4a7039;
+  --color-grass-700: #3d5c2f;
+  --color-grass-800: #345028;
+  --color-grass-900: #2d4423;
+
+  --color-cream: #FFFBF5;
+  --color-wood-light: #D4A574;
+  --color-wood: #8B7355;
+  --color-wood-dark: #5C4A3A;
+
+  /* Custom border radius */
+  --radius-rustic: 0.5rem;
+
+  /* Custom shadows */
+  --shadow-rustic: 0 4px 6px -1px rgba(139, 115, 85, 0.1), 0 2px 4px -1px rgba(139, 115, 85, 0.06);
+
+  /* Font families */
+  --font-display: "Merriweather", serif;
+  --font-body: "Inter", sans-serif;
+  --font-hand: "Caveat", cursive;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+/* Base styles */
+html {
+  font-family: var(--font-body);
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
