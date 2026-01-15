@@ -50,9 +50,11 @@ export default function ChickProfile({
   const [viewMode, setViewMode] = useState<ViewMode>("timeline");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const refreshChick = useCallback(async () => {
+    setIsRefreshing(true);
     try {
       const response = await fetch(`/api/flocks/${flockId}/chicks/${chick.id}`);
       if (response.ok) {
@@ -61,6 +63,8 @@ export default function ChickProfile({
       }
     } catch (error) {
       console.error("Failed to refresh chick data:", error);
+    } finally {
+      setIsRefreshing(false);
     }
   }, [flockId, chick.id]);
 
@@ -249,7 +253,12 @@ export default function ChickProfile({
           ))}
         </div>
 
-        <div className="p-6">
+        <div className="relative p-6">
+          {isRefreshing && (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+              <div className="bg-grass-500 h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            </div>
+          )}
           {viewMode === "timeline" && (
             <ChickTimeline
               photos={chick.photos}
