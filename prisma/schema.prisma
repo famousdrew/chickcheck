@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User model for authentication
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  flocks Flock[]
+}
+
+// Flock represents a batch of chicks being raised
+model Flock {
+  id          String      @id @default(cuid())
+  name        String      @default("My Flock")
+  startDate   DateTime?
+  currentWeek Int         @default(0)
+  status      FlockStatus @default(PREPARING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  taskCompletions TaskCompletion[]
+
+  @@index([userId])
+}
+
+enum FlockStatus {
+  PREPARING   // Week 0 - getting ready
+  ACTIVE      // Weeks 1-8 - raising chicks
+  GRADUATED   // Week 8+ - moved to coop
+}
+
+// Task represents a single task in the 8-week guide
+model Task {
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  detailedContent String        @db.Text
+  weekNumber      Int
+  dayNumber       Int?
+  frequency       TaskFrequency
+  category        TaskCategory
+  sortOrder       Int           @default(0)
+  createdAt       DateTime      @default(now())
+
+  completions TaskCompletion[]
+
+  @@index([weekNumber])
+  @@index([weekNumber, dayNumber])
+}
+
+enum TaskFrequency {
+  DAILY  // Repeats every day
+  WEEKLY // Once per week
+  ONCE   // One-time task
+}
+
+enum TaskCategory {
+  BROODER_CARE
+  FEEDING_WATER
+  HEALTH_CHECK
+  ENVIRONMENT
+  MILESTONE
+  PREPARATION
+}
+
+// TaskCompletion tracks when a user completes a task for their flock
+model TaskCompletion {
+  id          String    @id @default(cuid())
+  completedAt DateTime  @default(now())
+  undoneAt    DateTime?
+  notes       String?
+  dayDate     DateTime  // The specific day this completion is for (for daily tasks)
+
+  flockId String
+  flock   Flock  @relation(fields: [flockId], references: [id], onDelete: Cascade)
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([flockId, taskId, dayDate])
+  @@index([flockId])
+  @@index([taskId])
+}
