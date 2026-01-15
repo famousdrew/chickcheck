@@ -34,13 +34,15 @@
     "@ducanh2912/next-pwa": "^10.2.9",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "@vercel/blob": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "next": "^16.1.2",
     "next-auth": "^5.0.0-beta.30",
     "pg": "^8.17.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.1.2",
@@ -54,6 +56,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
+    "@types/sharp": "^0.31.1",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
     "@vitejs/plugin-react": "^5.1.2",
