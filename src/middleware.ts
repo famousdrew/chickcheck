@@ -33,3 +33,5 @@ export default auth((req) => {
 export const config = {
   matcher: ["/dashboard/:path*", "/login", "/signup"],
 };
+
+export const runtime = "nodejs";
