@@ -30,22 +30,24 @@
   --color-grass-200: #bbf7d0;
   --color-grass-300: #86efac;
   --color-grass-400: #4ade80;
-  --color-grass-500: #5D8A48;
+  --color-grass-500: #5d8a48;
   --color-grass-600: #4a7039;
   --color-grass-700: #3d5c2f;
   --color-grass-800: #345028;
   --color-grass-900: #2d4423;
 
-  --color-cream: #FFFBF5;
-  --color-wood-light: #D4A574;
-  --color-wood: #8B7355;
-  --color-wood-dark: #5C4A3A;
+  --color-cream: #fffbf5;
+  --color-wood-light: #d4a574;
+  --color-wood: #8b7355;
+  --color-wood-dark: #5c4a3a;
 
   /* Custom border radius */
   --radius-rustic: 0.5rem;
 
   /* Custom shadows */
-  --shadow-rustic: 0 4px 6px -1px rgba(139, 115, 85, 0.1), 0 2px 4px -1px rgba(139, 115, 85, 0.06);
+  --shadow-rustic:
+    0 4px 6px -1px rgba(139, 115, 85, 0.1),
+    0 2px 4px -1px rgba(139, 115, 85, 0.06);
 
   /* Font families */
   --font-display: "Merriweather", serif;
@@ -58,6 +60,11 @@ html {
   font-family: var(--font-body);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
 }
