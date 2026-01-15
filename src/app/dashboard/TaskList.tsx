@@ -27,6 +27,7 @@ export default function TaskList({ flockId }: TaskListProps) {
   const [currentDay, setCurrentDay] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -72,13 +73,15 @@ export default function TaskList({ flockId }: TaskListProps) {
       t.frequency === "DAILY" ||
       (t.dayNumber !== null && t.dayNumber === currentDay)
   );
+  const pendingTasks = todaysTasks.filter((t) => !t.isCompleted);
+  const completedTasks = todaysTasks.filter((t) => t.isCompleted);
   const upcomingTasks = tasks.filter(
     (t) =>
       t.frequency !== "DAILY" &&
       t.dayNumber !== null &&
       t.dayNumber > currentDay
   );
-  const completedCount = todaysTasks.filter((t) => t.isCompleted).length;
+  const completedCount = completedTasks.length;
 
   return (
     <div className="space-y-6">
@@ -120,13 +123,17 @@ export default function TaskList({ flockId }: TaskListProps) {
         <h3 className="font-display text-wood-dark mb-4 text-lg font-bold">
           Today&apos;s Tasks
         </h3>
-        {todaysTasks.length === 0 ? (
+        {pendingTasks.length === 0 && completedTasks.length === 0 ? (
           <p className="text-wood-dark/50 py-4 text-center">
             No tasks for today. Great job!
           </p>
+        ) : pendingTasks.length === 0 ? (
+          <p className="text-wood-dark/50 py-4 text-center">
+            All done for today!
+          </p>
         ) : (
           <div className="space-y-3">
-            {todaysTasks.map((task) => (
+            {pendingTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}
@@ -135,6 +142,48 @@ export default function TaskList({ flockId }: TaskListProps) {
                 onToggle={fetchTasks}
               />
             ))}
+          </div>
+        )}
+
+        {/* Completed Today Accordion */}
+        {completedTasks.length > 0 && (
+          <div className="border-wood-dark/10 mt-4 border-t pt-4">
+            <button
+              onClick={() => setShowCompleted(!showCompleted)}
+              className="flex w-full items-center justify-between text-left"
+            >
+              <span className="text-wood-dark/60 text-sm font-medium">
+                Completed today ({completedTasks.length})
+              </span>
+              <svg
+                className={`text-wood-dark/40 h-5 w-5 transition-transform ${
+                  showCompleted ? "rotate-180" : ""
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {showCompleted && (
+              <div className="mt-3 space-y-3">
+                {completedTasks.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    flockId={flockId}
+                    currentDay={currentDay}
+                    onToggle={fetchTasks}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
