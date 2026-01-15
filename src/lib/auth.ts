@@ -49,6 +49,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/login",
   },
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
+      const isOnAuthPage =
+        nextUrl.pathname.startsWith("/login") ||
+        nextUrl.pathname.startsWith("/signup");
+
+      if (isOnDashboard) {
+        // Protect dashboard - redirect to login if not authenticated
+        return isLoggedIn;
+      }
+
+      if (isOnAuthPage && isLoggedIn) {
+        // Redirect to dashboard if already logged in
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
