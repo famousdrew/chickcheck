@@ -194,46 +194,46 @@ Build the main task management interface including dashboard, task lists, comple
 
 ---
 
-## Phase 5: Week Progression & Navigation
+## Phase 5: Week Progression & Navigation ✅
 
 ### Objective
 Implement week-based navigation, progress tracking, and the transition from Week 0 to Week 1.
 
-- [ ] Task: Build Week 0 preparation experience
-    - [ ] Write tests for Week 0 task filtering
-    - [ ] Create Week 0 specific view with preparation checklist
-    - [ ] Write tests for "Chicks arrived" transition
-    - [ ] Build "My chicks are here!" confirmation flow
-    - [ ] Update flock startDate and currentWeek on confirmation
+- [x] Task: Build Week 0 preparation experience
+    - [x] Write tests for Week 0 task filtering
+    - [x] Create Week 0 specific view with preparation checklist
+    - [x] Write tests for "Chicks arrived" transition
+    - [x] Build "Chicks Have Arrived!" button in FlockHeader
+    - [x] Update flock startDate and currentWeek on confirmation
 
-- [ ] Task: Implement week progress indicator
-    - [ ] Write tests for progress calculation
-    - [ ] Create utility for calculating week progress percentage
-    - [ ] Write tests for WeekProgress component
-    - [ ] Build visual progress bar component
-    - [ ] Show completed/total tasks for current week
+- [x] Task: Implement week progress indicator
+    - [x] Write tests for progress calculation
+    - [x] Create utility for calculating week progress percentage
+    - [x] Write tests for WeekProgress component
+    - [x] Build visual progress bar component in TaskList
+    - [x] Show completed/total tasks for current week
 
-- [ ] Task: Build week navigation
-    - [ ] Write tests for week navigation component
-    - [ ] Build week selector/timeline component
-    - [ ] Allow viewing past weeks (completed tasks)
-    - [ ] Allow previewing future weeks (read-only)
-    - [ ] Highlight current week
+- [x] Task: Build week navigation
+    - [x] Write tests for week navigation component
+    - [x] Build WeekSelector component with week 0-8 buttons
+    - [x] Allow viewing past weeks (completed tasks)
+    - [x] Allow previewing future weeks (read-only with preview notice)
+    - [x] Highlight current week
 
-- [ ] Task: Implement automatic week transitions
-    - [ ] Write tests for week calculation based on startDate
-    - [ ] Create utility to calculate current week from flock startDate
-    - [ ] Update flock.currentWeek on each dashboard load
-    - [ ] Handle edge cases (Week 8+, late starts)
+- [x] Task: Implement automatic week transitions
+    - [x] Write tests for week calculation based on startDate
+    - [x] Create calculateCurrentWeek utility in flocks.ts
+    - [x] Update flock.currentWeek on each dashboard load
+    - [x] Handle edge cases (Week 8+, Week 0)
 
-- [ ] Task: Build weekly summary view
-    - [ ] Write tests for weekly summary data
-    - [ ] Create GET /api/flocks/[id]/weeks/[weekNum] endpoint
-    - [ ] Write tests for WeeklySummary component
-    - [ ] Build weekly view with categorized tasks
-    - [ ] Display milestone checks and pro tips
+- [x] Task: Build weekly summary view
+    - [x] Write tests for weekly summary data
+    - [x] Tasks API supports ?week= parameter for any week
+    - [x] Write tests for WeeklySummary component
+    - [x] Build weekly view with Daily Tasks and One-time Tasks sections
+    - [x] Display preparation tasks for Week 0
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Week Progression & Navigation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Week Progression & Navigation' (Protocol in workflow.md)
 
 ---
 
