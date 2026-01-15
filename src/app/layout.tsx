@@ -19,8 +19,6 @@ export const viewport: Viewport = {
   themeColor: "#9E2A2B",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
@@ -43,7 +41,15 @@ export default function RootLayout({
         />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <a
+          href="#main-content"
+          className="bg-barn-500 focus:ring-barn-500 sr-only text-white focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:ring-2 focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

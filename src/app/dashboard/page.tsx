@@ -36,7 +36,7 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-8">
+      <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
         {!activeFlock ? (
           <CreateFlockForm />
         ) : (

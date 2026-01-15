@@ -23,12 +23,15 @@ function LoginFormFallback() {
 
 export default function LoginPage() {
   return (
-    <div className="bg-cream flex min-h-screen items-center justify-center px-4">
+    <main
+      id="main-content"
+      className="bg-cream flex min-h-screen items-center justify-center px-4"
+    >
       <div className="w-full max-w-md">
         <Suspense fallback={<LoginFormFallback />}>
           <LoginForm />
         </Suspense>
       </div>
-    </div>
+    </main>
   );
 }

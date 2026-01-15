@@ -47,7 +47,10 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="bg-cream flex min-h-screen items-center justify-center px-4">
+    <main
+      id="main-content"
+      className="bg-cream flex min-h-screen items-center justify-center px-4"
+    >
       <div className="w-full max-w-md">
         <div className="rounded-rustic shadow-rustic bg-white p-8">
           <div className="mb-6 text-center">
@@ -142,6 +145,6 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
