@@ -34,6 +34,7 @@ model Flock {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   taskCompletions TaskCompletion[]
+  chicks          Chick[]
 
   @@index([userId])
 }
@@ -95,4 +96,55 @@ model TaskCompletion {
   @@unique([flockId, taskId, dayDate])
   @@index([flockId])
   @@index([taskId])
+}
+
+// Chick represents an individual bird in a flock
+model Chick {
+  id          String    @id @default(cuid())
+  name        String
+  breed       String?
+  hatchDate   DateTime?
+  description String?   @db.VarChar(500)
+  photoUrl    String?   // Profile/avatar photo URL
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  flockId String
+  flock   Flock  @relation(fields: [flockId], references: [id], onDelete: Cascade)
+
+  photos ChickPhoto[]
+  notes  ChickNote[]
+
+  @@index([flockId])
+}
+
+// ChickPhoto stores photos of individual chicks
+model ChickPhoto {
+  id           String   @id @default(cuid())
+  imageUrl     String   // Full-size image URL in cloud storage
+  thumbnailUrl String   // Thumbnail URL for gallery view
+  takenAt      DateTime @default(now())
+  weekNumber   Int? // Chick's age in weeks when photo was taken
+  createdAt    DateTime @default(now())
+
+  chickId String
+  chick   Chick  @relation(fields: [chickId], references: [id], onDelete: Cascade)
+
+  @@index([chickId])
+  @@index([chickId, takenAt])
+}
+
+// ChickNote stores observations and notes about individual chicks
+model ChickNote {
+  id         String   @id @default(cuid())
+  content    String   @db.VarChar(1000)
+  weekNumber Int? // Chick's age in weeks when note was written
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  chickId String
+  chick   Chick  @relation(fields: [chickId], references: [id], onDelete: Cascade)
+
+  @@index([chickId])
+  @@index([chickId, createdAt])
 }
