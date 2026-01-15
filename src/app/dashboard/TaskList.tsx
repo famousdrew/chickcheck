@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { TaskCategory, TaskFrequency } from "@prisma/client";
 import TaskItem from "./TaskItem";
+import TemperatureCard from "./TemperatureCard";
 
 interface Task {
   id: string;
@@ -117,6 +118,9 @@ export default function TaskList({ flockId }: TaskListProps) {
           />
         </div>
       </div>
+
+      {/* Temperature Card */}
+      <TemperatureCard weekNumber={currentWeek} />
 
       {/* Today's Tasks */}
       <div className="rounded-rustic shadow-rustic bg-white p-6">
