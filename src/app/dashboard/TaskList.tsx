@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { TaskCategory, TaskFrequency } from "@prisma/client";
+import { TaskCategory, TaskFrequency, FlockStatus } from "@prisma/client";
 import TaskItem from "./TaskItem";
 import TemperatureCard from "./TemperatureCard";
-import WeekSelector from "./WeekSelector";
+import FlockDashboardHeader from "./FlockDashboardHeader";
 
 interface Task {
   id: string;
@@ -21,9 +21,16 @@ interface Task {
 
 interface TaskListProps {
   flockId: string;
+  flock: {
+    id: string;
+    name: string;
+    status: FlockStatus;
+    startDate: string | null;
+    currentWeek: number;
+  };
 }
 
-export default function TaskList({ flockId }: TaskListProps) {
+export default function TaskList({ flockId, flock }: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [selectedWeek, setSelectedWeek] = useState(0);
@@ -89,8 +96,6 @@ export default function TaskList({ flockId }: TaskListProps) {
   }
 
   const isViewingCurrentWeek = selectedWeek === currentWeek;
-  const isViewingPastWeek = selectedWeek < currentWeek;
-  const isViewingFutureWeek = selectedWeek > currentWeek;
 
   // For current week: separate into today's tasks and upcoming
   // For other weeks: show all tasks for that week
@@ -124,63 +129,16 @@ export default function TaskList({ flockId }: TaskListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Week Selector */}
-      <WeekSelector
+      {/* Combined Dashboard Header */}
+      <FlockDashboardHeader
+        flock={flock}
         currentWeek={currentWeek}
+        currentDay={currentDay}
         selectedWeek={selectedWeek}
         onWeekChange={handleWeekChange}
+        completedCount={completedCount}
+        totalCount={totalCount}
       />
-
-      {/* Progress Header */}
-      <div className="rounded-rustic shadow-rustic bg-white p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-display text-wood-dark text-xl font-bold">
-              {isViewingCurrentWeek
-                ? `Week ${currentWeek}, Day ${currentDay}`
-                : selectedWeek === 0
-                  ? "Week 0: Preparation"
-                  : `Week ${selectedWeek}`}
-            </h2>
-            <p className="text-wood-dark/70 text-sm">
-              {isViewingCurrentWeek
-                ? `${completedCount} of ${totalCount} tasks completed today`
-                : isViewingPastWeek
-                  ? `${completedCount} of ${totalCount} tasks completed`
-                  : `${totalCount} tasks in this week`}
-            </p>
-          </div>
-          {!isViewingFutureWeek && (
-            <div className="text-right">
-              <div className="text-grass-600 text-2xl font-bold">
-                {totalCount > 0
-                  ? Math.round((completedCount / totalCount) * 100)
-                  : 0}
-                %
-              </div>
-              <div className="text-wood-dark/50 text-xs">Complete</div>
-            </div>
-          )}
-        </div>
-
-        {/* Progress bar */}
-        {!isViewingFutureWeek && (
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-200">
-            <div
-              className="bg-grass-500 h-full transition-all duration-300"
-              style={{
-                width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
-              }}
-            />
-          </div>
-        )}
-
-        {isViewingFutureWeek && (
-          <p className="text-wood-dark/50 mt-2 text-sm italic">
-            Preview only - tasks will be available when you reach this week
-          </p>
-        )}
-      </div>
 
       {/* Temperature Card */}
       <TemperatureCard weekNumber={selectedWeek} />

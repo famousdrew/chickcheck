@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { findFlocksByUserId } from "@/lib/services/flocks";
 import SignOutButton from "./SignOutButton";
 import CreateFlockForm from "./CreateFlockForm";
-import FlockHeader from "./FlockHeader";
 import TaskList from "./TaskList";
 import ChickGallery from "./ChickGallery";
 import OfflineIndicator from "@/components/OfflineIndicator";
@@ -42,7 +41,8 @@ export default async function DashboardPage() {
           <CreateFlockForm />
         ) : (
           <div className="space-y-6">
-            <FlockHeader
+            <TaskList
+              flockId={activeFlock.id}
               flock={{
                 id: activeFlock.id,
                 name: activeFlock.name,
@@ -51,7 +51,6 @@ export default async function DashboardPage() {
                 currentWeek: activeFlock.currentWeek,
               }}
             />
-            <TaskList flockId={activeFlock.id} />
             <ChickGallery flockId={activeFlock.id} />
           </div>
         )}
