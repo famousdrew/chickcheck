@@ -1,3 +1,51 @@
+# ChickCheck - Project Context
+
+ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during the first 8 weeks of raising. Built with Next.js 16, deployed on Railway.
+
+## Quick Reference
+
+- **Database**: PostgreSQL on Railway (use `railway variables` to get DATABASE_URL)
+- **Image Storage**: Vercel Blob (BLOB_READ_WRITE_TOKEN in .env)
+- **Timezone**: App uses Pacific Time (PST/PDT) for task completions - see `src/lib/utils/timezone.ts`
+- **User**: Drew is in PST timezone
+
+## Key Features Implemented
+
+1. **Task Management System** (MVP)
+   - Week 0-8 task schedules with daily/weekly tasks
+   - Task completion tracking per day
+   - Temperature recommendations by week
+   - Flock status (Preparing → Active → Graduated)
+
+2. **Chick Profiles & Photo Journal**
+   - Individual chick profiles with name, breed, hatch date
+   - Photo upload with drag-and-drop (Vercel Blob storage)
+   - Notes/observations per chick
+   - Timeline view (photos + notes interleaved by date)
+
+## Important Files
+
+- `src/app/dashboard/` - Main dashboard components
+- `src/lib/services/` - Database service layer (Prisma)
+- `src/lib/utils/storage.ts` - Vercel Blob upload utilities
+- `src/lib/utils/timezone.ts` - Pacific timezone helpers
+- `prisma/schema.prisma` - Database schema
+
+## Deployment Notes
+
+- Railway auto-deploys from `main` branch on GitHub
+- Build command: `prisma generate && next build --webpack`
+- Start command: `npm run start`
+- If schema changes, run: `DATABASE_URL="<railway_url>" npx prisma db push`
+
+## Known Issues / Future Work
+
+- Timezone is hardcoded to Pacific - could add user preference
+- No offline support for photo uploads yet
+- Could add chick avatar/profile photo distinct from gallery
+
+---
+
 # Conductor Context
 
 This project uses [Conductor](https://github.com/gagarinyury/claude_conductor) for spec-driven development.
