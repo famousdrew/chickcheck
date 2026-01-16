@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { findFlockById, calculateCurrentDay } from "@/lib/services/flocks";
 import { findTasksByWeek } from "@/lib/services/tasks";
 import { findCompletionsByFlockAndDate } from "@/lib/services/task-completions";
+import { getTodayInPacific } from "@/lib/utils/timezone";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -40,9 +41,8 @@ export async function GET(
   const week = weekParam ? parseInt(weekParam, 10) : currentWeek;
   const tasks = await findTasksByWeek(week);
 
-  // Get today's date at midnight UTC for completion lookup
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+  // Get today's date in Pacific timezone for completion lookup
+  const today = getTodayInPacific();
 
   const completions = await findCompletionsByFlockAndDate(flockId, today);
   const completedTaskIds = new Set(completions.map((c) => c.taskId));

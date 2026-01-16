@@ -4,6 +4,7 @@ import {
   completeTask,
   undoTaskCompletion,
 } from "@/lib/services/task-completions";
+import { getTodayInPacific } from "@/lib/utils/timezone";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -34,9 +35,11 @@ export async function POST(
     return NextResponse.json({ error: "taskId is required" }, { status: 400 });
   }
 
-  // Use today if dayDate not provided, normalized to midnight UTC
-  const date = dayDate ? new Date(dayDate) : new Date();
-  date.setUTCHours(0, 0, 0, 0);
+  // Use today in Pacific timezone if dayDate not provided
+  const date = dayDate ? new Date(dayDate) : getTodayInPacific();
+  if (dayDate) {
+    date.setUTCHours(0, 0, 0, 0); // Normalize provided dates to midnight UTC
+  }
 
   if (action === "undo") {
     const completion = await undoTaskCompletion(flockId, taskId, date);
