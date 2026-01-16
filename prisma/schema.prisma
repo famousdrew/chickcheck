@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,65 +6,118 @@ datasource db {
   provider = "postgresql"
 }
 
-// User model for authentication
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  flocks Flock[]
+  flocks       Flock[]
 }
 
-// Flock represents a batch of chicks being raised
 model Flock {
-  id          String      @id @default(cuid())
-  name        String      @default("My Flock")
-  startDate   DateTime?
-  currentWeek Int         @default(0)
-  status      FlockStatus @default(PREPARING)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  taskCompletions TaskCompletion[]
+  id              String           @id @default(cuid())
+  name            String           @default("My Flock")
+  startDate       DateTime?
+  currentWeek     Int              @default(0)
+  status          FlockStatus      @default(PREPARING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userId          String
   chicks          Chick[]
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskCompletions TaskCompletion[]
 
   @@index([userId])
 }
 
-enum FlockStatus {
-  PREPARING   // Week 0 - getting ready
-  ACTIVE      // Weeks 1-8 - raising chicks
-  GRADUATED   // Week 8+ - moved to coop
-}
-
-// Task represents a single task in the 8-week guide
 model Task {
-  id              String        @id @default(cuid())
+  id              String           @id @default(cuid())
   title           String
   description     String
-  detailedContent String        @db.Text
+  detailedContent String
   weekNumber      Int
   dayNumber       Int?
   frequency       TaskFrequency
   category        TaskCategory
-  sortOrder       Int           @default(0)
-  createdAt       DateTime      @default(now())
-
-  completions TaskCompletion[]
+  sortOrder       Int              @default(0)
+  createdAt       DateTime         @default(now())
+  completions     TaskCompletion[]
 
   @@index([weekNumber])
   @@index([weekNumber, dayNumber])
 }
 
+model TaskCompletion {
+  id          String    @id @default(cuid())
+  completedAt DateTime  @default(now())
+  undoneAt    DateTime?
+  notes       String?
+  dayDate     DateTime
+  flockId     String
+  taskId      String
+  flock       Flock     @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([flockId, taskId, dayDate])
+  @@index([flockId])
+  @@index([taskId])
+}
+
+model Chick {
+  id          String       @id @default(cuid())
+  name        String
+  breed       String?
+  hatchDate   DateTime?
+  description String?      @db.VarChar(500)
+  photoUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  flockId     String
+  flock       Flock        @relation(fields: [flockId], references: [id], onDelete: Cascade)
+  notes       ChickNote[]
+  photos      ChickPhoto[]
+
+  @@index([flockId])
+}
+
+model ChickPhoto {
+  id           String   @id @default(cuid())
+  imageUrl     String
+  thumbnailUrl String
+  takenAt      DateTime @default(now())
+  weekNumber   Int?
+  createdAt    DateTime @default(now())
+  chickId      String
+  chick        Chick    @relation(fields: [chickId], references: [id], onDelete: Cascade)
+
+  @@index([chickId])
+  @@index([chickId, takenAt])
+}
+
+model ChickNote {
+  id         String   @id @default(cuid())
+  content    String   @db.VarChar(1000)
+  weekNumber Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  chickId    String
+  chick      Chick    @relation(fields: [chickId], references: [id], onDelete: Cascade)
+
+  @@index([chickId])
+  @@index([chickId, createdAt])
+}
+
+enum FlockStatus {
+  PREPARING
+  ACTIVE
+  GRADUATED
+}
+
 enum TaskFrequency {
-  DAILY  // Repeats every day
-  WEEKLY // Once per week
-  ONCE   // One-time task
+  DAILY
+  WEEKLY
+  ONCE
 }
 
 enum TaskCategory {
@@ -77,74 +127,4 @@ enum TaskCategory {
   ENVIRONMENT
   MILESTONE
   PREPARATION
-}
-
-// TaskCompletion tracks when a user completes a task for their flock
-model TaskCompletion {
-  id          String    @id @default(cuid())
-  completedAt DateTime  @default(now())
-  undoneAt    DateTime?
-  notes       String?
-  dayDate     DateTime  // The specific day this completion is for (for daily tasks)
-
-  flockId String
-  flock   Flock  @relation(fields: [flockId], references: [id], onDelete: Cascade)
-
-  taskId String
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  @@unique([flockId, taskId, dayDate])
-  @@index([flockId])
-  @@index([taskId])
-}
-
-// Chick represents an individual bird in a flock
-model Chick {
-  id          String    @id @default(cuid())
-  name        String
-  breed       String?
-  hatchDate   DateTime?
-  description String?   @db.VarChar(500)
-  photoUrl    String?   // Profile/avatar photo URL
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  flockId String
-  flock   Flock  @relation(fields: [flockId], references: [id], onDelete: Cascade)
-
-  photos ChickPhoto[]
-  notes  ChickNote[]
-
-  @@index([flockId])
-}
-
-// ChickPhoto stores photos of individual chicks
-model ChickPhoto {
-  id           String   @id @default(cuid())
-  imageUrl     String   // Full-size image URL in cloud storage
-  thumbnailUrl String   // Thumbnail URL for gallery view
-  takenAt      DateTime @default(now())
-  weekNumber   Int? // Chick's age in weeks when photo was taken
-  createdAt    DateTime @default(now())
-
-  chickId String
-  chick   Chick  @relation(fields: [chickId], references: [id], onDelete: Cascade)
-
-  @@index([chickId])
-  @@index([chickId, takenAt])
-}
-
-// ChickNote stores observations and notes about individual chicks
-model ChickNote {
-  id         String   @id @default(cuid())
-  content    String   @db.VarChar(1000)
-  weekNumber Int? // Chick's age in weeks when note was written
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  chickId String
-  chick   Chick  @relation(fields: [chickId], references: [id], onDelete: Cascade)
-
-  @@index([chickId])
-  @@index([chickId, createdAt])
 }

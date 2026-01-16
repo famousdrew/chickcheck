@@ -34,9 +34,9 @@ export async function POST(
     return NextResponse.json({ error: "taskId is required" }, { status: 400 });
   }
 
-  // Use today if dayDate not provided
+  // Use today if dayDate not provided, normalized to midnight UTC
   const date = dayDate ? new Date(dayDate) : new Date();
-  date.setHours(0, 0, 0, 0);
+  date.setUTCHours(0, 0, 0, 0);
 
   if (action === "undo") {
     const completion = await undoTaskCompletion(flockId, taskId, date);

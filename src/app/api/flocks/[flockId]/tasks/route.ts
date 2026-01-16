@@ -40,9 +40,9 @@ export async function GET(
   const week = weekParam ? parseInt(weekParam, 10) : currentWeek;
   const tasks = await findTasksByWeek(week);
 
-  // Get today's date at midnight for completion lookup
+  // Get today's date at midnight UTC for completion lookup
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0);
 
   const completions = await findCompletionsByFlockAndDate(flockId, today);
   const completedTaskIds = new Set(completions.map((c) => c.taskId));
