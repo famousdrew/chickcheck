@@ -1,8 +1,15 @@
 [build]
 builder = "nixpacks"
 
+[build.nixpacksPlan.phases.setup]
+nixPkgs = ["nodejs_22"]
+
+[build.nixpacksPlan.phases.install]
+cmds = ["npm ci"]
+cacheDirectories = ["node_modules", ".next/cache"]
+
 [deploy]
-startCommand = "npm run start"
+startCommand = "node .next/standalone/server.js"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"

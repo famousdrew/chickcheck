@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push && next build --webpack",
+    "build": "prisma generate && prisma db push && next build --webpack && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
