@@ -1,11 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { findFlocksByUserId } from "@/lib/services/flocks";
-import SignOutButton from "./SignOutButton";
-import WelcomeSetup from "./WelcomeSetup";
-import JourneyOverview from "./JourneyOverview";
-import TaskList from "./TaskList";
-import ChickGallery from "./ChickGallery";
+import DashboardContent from "./DashboardContent";
 import OfflineIndicator from "@/components/OfflineIndicator";
 
 export const dynamic = "force-dynamic";
@@ -18,45 +14,19 @@ export default async function DashboardPage() {
   }
 
   const flocks = await findFlocksByUserId(session.user.id);
-  const activeFlock = flocks[0]; // For now, just use the first flock
+
+  const flocksData = flocks.map((f) => ({
+    id: f.id,
+    name: f.name,
+    status: f.status,
+    startDate: f.startDate?.toISOString() ?? null,
+    currentWeek: f.currentWeek,
+  }));
 
   return (
     <div className="bg-cream min-h-screen">
       <OfflineIndicator />
-      <header className="border-wood-dark/10 border-b bg-white">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <h1 className="font-display text-wood-dark text-2xl font-bold">
-            ChickCheck
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-wood-dark/70 text-sm">
-              {session.user.email}
-            </span>
-            <SignOutButton />
-          </div>
-        </div>
-      </header>
-
-      <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
-        {!activeFlock ? (
-          <WelcomeSetup />
-        ) : (
-          <div className="space-y-6">
-            <JourneyOverview currentWeek={activeFlock.currentWeek} />
-            <TaskList
-              flockId={activeFlock.id}
-              flock={{
-                id: activeFlock.id,
-                name: activeFlock.name,
-                status: activeFlock.status,
-                startDate: activeFlock.startDate?.toISOString() ?? null,
-                currentWeek: activeFlock.currentWeek,
-              }}
-            />
-            <ChickGallery flockId={activeFlock.id} />
-          </div>
-        )}
-      </main>
+      <DashboardContent flocks={flocksData} email={session.user.email ?? ""} />
     </div>
   );
 }

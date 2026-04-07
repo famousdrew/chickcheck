@@ -76,6 +76,8 @@ export default function WelcomeSetup() {
 
       // Track creation time for notification prompt delay
       localStorage.setItem("chickcheck:flockCreatedAt", Date.now().toString());
+      // Set as active flock so the switcher picks it up
+      localStorage.setItem("chickcheck:activeFlockId", flock.id);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
