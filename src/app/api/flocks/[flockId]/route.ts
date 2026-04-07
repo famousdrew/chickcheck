@@ -5,85 +5,107 @@ import {
   startFlock,
   deleteFlock,
 } from "@/lib/services/flocks";
+import { withErrorHandler } from "@/lib/api-handler";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ flockId: string }> }
-) {
-  const session = await auth();
+export const GET = withErrorHandler(
+  async (
+    _request: Request,
+    { params }: { params: Promise<{ flockId: string }> }
+  ) => {
+    const session = await auth();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { flockId } = await params;
+    const flock = await findFlockById(flockId);
+
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
+
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    return NextResponse.json(flock);
   }
+);
 
-  const { flockId } = await params;
-  const flock = await findFlockById(flockId);
+export const PATCH = withErrorHandler(
+  async (
+    request: Request,
+    { params }: { params: Promise<{ flockId: string }> }
+  ) => {
+    const session = await auth();
 
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+    const { flockId } = await params;
+    const flock = await findFlockById(flockId);
 
-  return NextResponse.json(flock);
-}
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ flockId: string }> }
-) {
-  const session = await auth();
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    const body = await request.json();
 
-  const { flockId } = await params;
-  const flock = await findFlockById(flockId);
+    if (body.action === "start") {
+      const updated = await startFlock(flockId, new Date());
+      return NextResponse.json(updated);
+    }
 
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
+    // Only allow known fields to prevent mass assignment
+    const { name, startDate, currentWeek, status } = body;
 
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+    if (name && typeof name === "string" && name.length > 100) {
+      return NextResponse.json(
+        { error: "Flock name must be 100 characters or less" },
+        { status: 400 }
+      );
+    }
 
-  const body = await request.json();
-
-  if (body.action === "start") {
-    const updated = await startFlock(flockId, new Date());
+    const updated = await updateFlock(flockId, {
+      name,
+      startDate,
+      currentWeek,
+      status,
+    });
     return NextResponse.json(updated);
   }
+);
 
-  const updated = await updateFlock(flockId, body);
-  return NextResponse.json(updated);
-}
+export const DELETE = withErrorHandler(
+  async (
+    _request: Request,
+    { params }: { params: Promise<{ flockId: string }> }
+  ) => {
+    const session = await auth();
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ flockId: string }> }
-) {
-  const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { flockId } = await params;
+    const flock = await findFlockById(flockId);
+
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
+
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    await deleteFlock(flockId);
+    return NextResponse.json({ success: true });
   }
-
-  const { flockId } = await params;
-  const flock = await findFlockById(flockId);
-
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
-
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  await deleteFlock(flockId);
-  return NextResponse.json({ success: true });
-}
+);

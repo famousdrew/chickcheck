@@ -33,6 +33,7 @@ export default function FlockDashboardHeader({
 }: FlockDashboardHeaderProps) {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
+  const [showStartConfirm, setShowStartConfirm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(flock.name);
   const [isSaving, setIsSaving] = useState(false);
@@ -47,6 +48,7 @@ export default function FlockDashboardHeader({
 
   async function handleStartFlock() {
     setIsStarting(true);
+    setShowStartConfirm(false);
     try {
       await fetch(`/api/flocks/${flock.id}`, {
         method: "PATCH",
@@ -158,7 +160,7 @@ export default function FlockDashboardHeader({
 
         {flock.status === "PREPARING" ? (
           <button
-            onClick={handleStartFlock}
+            onClick={() => setShowStartConfirm(true)}
             disabled={isStarting}
             className="bg-barn-500 hover:bg-barn-500/90 disabled:bg-barn-500/50 rounded-rustic flex-shrink-0 px-3 py-1.5 text-sm font-medium text-white transition-colors"
           >
@@ -176,7 +178,7 @@ export default function FlockDashboardHeader({
         <button
           onClick={() => onWeekChange(Math.max(0, selectedWeek - 1))}
           disabled={selectedWeek === 0}
-          className="flex-shrink-0 rounded-full p-1.5 transition-colors hover:bg-gray-100 disabled:opacity-30"
+          className="flex-shrink-0 rounded-full p-2.5 transition-colors hover:bg-gray-100 disabled:opacity-30 sm:p-1.5"
           aria-label="Previous week"
         >
           <svg
@@ -205,7 +207,7 @@ export default function FlockDashboardHeader({
               <button
                 key={week}
                 onClick={() => onWeekChange(week)}
-                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium transition-colors ${
+                className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium transition-colors sm:h-8 sm:w-8 ${
                   isSelected
                     ? "bg-grass-500 text-white"
                     : isCurrent
@@ -227,7 +229,7 @@ export default function FlockDashboardHeader({
         <button
           onClick={() => onWeekChange(Math.min(maxWeek, selectedWeek + 1))}
           disabled={selectedWeek === maxWeek}
-          className="flex-shrink-0 rounded-full p-1.5 transition-colors hover:bg-gray-100 disabled:opacity-30"
+          className="flex-shrink-0 rounded-full p-2.5 transition-colors hover:bg-gray-100 disabled:opacity-30 sm:p-1.5"
           aria-label="Next week"
         >
           <svg
@@ -279,6 +281,49 @@ export default function FlockDashboardHeader({
             className="bg-grass-500 h-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
+        </div>
+      )}
+      {/* Start flock confirmation dialog */}
+      {showStartConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowStartConfirm(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="rounded-rustic shadow-rustic relative w-full max-w-sm bg-white p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="start-flock-title"
+          >
+            <h2
+              id="start-flock-title"
+              className="font-display text-wood-dark mb-2 text-lg font-bold"
+            >
+              Start your flock?
+            </h2>
+            <p className="text-wood-dark/70 mb-4 text-sm">
+              This will set today as your start date and begin the 8-week care
+              schedule. This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowStartConfirm(false)}
+                className="border-wood-dark/20 text-wood-dark hover:bg-wood-dark/5 rounded-rustic flex-1 border px-4 py-2 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleStartFlock}
+                className="bg-barn-500 hover:bg-barn-600 rounded-rustic flex-1 px-4 py-2 font-medium text-white transition-colors"
+              >
+                Start!
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

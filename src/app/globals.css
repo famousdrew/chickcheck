@@ -49,10 +49,7 @@
     0 4px 6px -1px rgba(139, 115, 85, 0.1),
     0 2px 4px -1px rgba(139, 115, 85, 0.06);
 
-  /* Font families */
-  --font-display: "Merriweather", serif;
-  --font-body: "Inter", sans-serif;
-  --font-hand: "Caveat", cursive;
+  /* Font families - set by next/font on <html> element */
 }
 
 /* Base styles */

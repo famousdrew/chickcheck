@@ -31,18 +31,24 @@ export function normalizeDateToPacific(date: Date): Date {
 }
 
 /**
- * Get the current day number (1-7) in Pacific timezone
+ * Get the current day of the week (1=Sunday, 7=Saturday) in Pacific timezone
  */
 export function getCurrentDayInPacific(): number {
   const now = new Date();
-  const pacificDay = parseInt(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: PACIFIC_TIMEZONE,
-      day: "numeric",
-    }).format(now),
-    10
-  );
-  return pacificDay;
+  const pacificWeekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: PACIFIC_TIMEZONE,
+    weekday: "short",
+  }).format(now);
+  const dayMap: Record<string, number> = {
+    Sun: 1,
+    Mon: 2,
+    Tue: 3,
+    Wed: 4,
+    Thu: 5,
+    Fri: 6,
+    Sat: 7,
+  };
+  return dayMap[pacificWeekday] ?? 1;
 }
 
 /**

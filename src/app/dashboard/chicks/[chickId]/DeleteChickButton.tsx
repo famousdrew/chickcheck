@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/Modal";
 
 interface DeleteChickButtonProps {
   chickId: string;
@@ -33,7 +34,6 @@ export default function DeleteChickButton({
         throw new Error(data.error || "Failed to delete chick");
       }
 
-      // Navigate back to dashboard
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
@@ -42,28 +42,21 @@ export default function DeleteChickButton({
     }
   };
 
-  if (!isConfirming) {
-    return (
+  return (
+    <>
       <button
         onClick={() => setIsConfirming(true)}
         className="text-barn-500 hover:text-barn-600 text-sm font-medium transition-colors"
       >
         Delete
       </button>
-    );
-  }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={() => !isDeleting && setIsConfirming(false)}
-        aria-hidden="true"
-      />
-
-      {/* Modal */}
-      <div className="rounded-rustic shadow-rustic relative w-full max-w-sm bg-white p-6">
+      <Modal
+        isOpen={isConfirming}
+        onClose={() => !isDeleting && setIsConfirming(false)}
+        ariaLabel={`Delete ${chickName}`}
+        maxWidth="max-w-sm"
+      >
         <h2 className="font-display text-wood-dark mb-2 text-lg font-bold">
           Delete {chickName}?
         </h2>
@@ -72,7 +65,11 @@ export default function DeleteChickButton({
           and notes. This action cannot be undone.
         </p>
 
-        {error && <p className="text-barn-500 mb-4 text-sm">{error}</p>}
+        {error && (
+          <p className="text-barn-500 mb-4 text-sm" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="flex gap-3">
           <button
@@ -92,7 +89,7 @@ export default function DeleteChickButton({
             {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
-      </div>
-    </div>
+      </Modal>
+    </>
   );
 }

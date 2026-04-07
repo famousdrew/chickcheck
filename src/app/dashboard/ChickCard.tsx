@@ -11,13 +11,9 @@ interface ChickCardProps {
     photoUrl: string | null;
     photos?: { thumbnailUrl: string }[];
   };
-  flockId: string;
 }
 
-export default function ChickCard({
-  chick,
-  flockId: _flockId,
-}: ChickCardProps) {
+export default function ChickCard({ chick }: ChickCardProps) {
   // Use photoUrl (avatar) or first photo thumbnail, or placeholder
   const imageUrl = chick.photoUrl || chick.photos?.[0]?.thumbnailUrl || null;
 

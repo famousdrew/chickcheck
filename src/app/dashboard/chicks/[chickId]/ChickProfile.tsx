@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
+import Modal from "@/components/Modal";
 import PhotoUpload from "./PhotoUpload";
 import PhotoGallery from "./PhotoGallery";
 import NotesList from "./NotesList";
@@ -102,10 +104,12 @@ export default function ChickProfile({
           {/* Avatar */}
           <div className="bg-cream relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full">
             {chick.photoUrl || chick.photos[0]?.thumbnailUrl ? (
-              <img
-                src={chick.photoUrl || chick.photos[0]?.thumbnailUrl}
+              <Image
+                src={chick.photoUrl || chick.photos[0]?.thumbnailUrl || ""}
                 alt={chick.name}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                sizes="80px"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
@@ -289,17 +293,21 @@ export default function ChickProfile({
       </div>
 
       {/* Full-size photo modal from timeline */}
-      {selectedPhoto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/80"
-            onClick={() => setSelectedPhoto(null)}
-          />
-          <div className="relative max-h-[90vh] max-w-4xl">
-            <img
+      <Modal
+        isOpen={!!selectedPhoto}
+        onClose={() => setSelectedPhoto(null)}
+        ariaLabel="Photo viewer"
+        maxWidth="max-w-4xl"
+      >
+        {selectedPhoto && (
+          <div className="relative -m-6">
+            <Image
               src={selectedPhoto.imageUrl}
               alt="Full size photo"
-              className="max-h-[85vh] rounded-lg object-contain"
+              width={800}
+              height={600}
+              className="max-h-[85vh] w-full rounded-lg object-contain"
+              unoptimized
             />
             <button
               onClick={() => setSelectedPhoto(null)}
@@ -321,8 +329,8 @@ export default function ChickProfile({
               </svg>
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Edit chick modal */}
       <EditChickModal

@@ -2,164 +2,171 @@ import { auth } from "@/lib/auth";
 import { findFlockById } from "@/lib/services/flocks";
 import { findChickById, updateChick, deleteChick } from "@/lib/services/chicks";
 import { deleteChickPhotos } from "@/lib/utils/storage";
+import { withErrorHandler } from "@/lib/api-handler";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ flockId: string; chickId: string }> }
-) {
-  const session = await auth();
+export const GET = withErrorHandler(
+  async (
+    _request: Request,
+    { params }: { params: Promise<{ flockId: string; chickId: string }> }
+  ) => {
+    const session = await auth();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const { flockId, chickId } = await params;
-  const flock = await findFlockById(flockId);
+    const { flockId, chickId } = await params;
+    const flock = await findFlockById(flockId);
 
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
 
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-  const chick = await findChickById(chickId);
+    const chick = await findChickById(chickId);
 
-  if (!chick) {
-    return NextResponse.json({ error: "Chick not found" }, { status: 404 });
-  }
+    if (!chick) {
+      return NextResponse.json({ error: "Chick not found" }, { status: 404 });
+    }
 
-  if (chick.flockId !== flockId) {
-    return NextResponse.json(
-      { error: "Chick not in this flock" },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json(chick);
-}
-
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ flockId: string; chickId: string }> }
-) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { flockId, chickId } = await params;
-  const flock = await findFlockById(flockId);
-
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
-
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const chick = await findChickById(chickId);
-
-  if (!chick) {
-    return NextResponse.json({ error: "Chick not found" }, { status: 404 });
-  }
-
-  if (chick.flockId !== flockId) {
-    return NextResponse.json(
-      { error: "Chick not in this flock" },
-      { status: 404 }
-    );
-  }
-
-  const body = await request.json();
-  const { name, breed, hatchDate, description, photoUrl } = body;
-
-  // Validate name if provided
-  if (name !== undefined) {
-    if (typeof name !== "string" || name.trim().length === 0) {
+    if (chick.flockId !== flockId) {
       return NextResponse.json(
-        { error: "Name cannot be empty" },
-        { status: 400 }
+        { error: "Chick not in this flock" },
+        { status: 404 }
       );
     }
-    if (name.length > 50) {
+
+    return NextResponse.json(chick);
+  }
+);
+
+export const PATCH = withErrorHandler(
+  async (
+    request: Request,
+    { params }: { params: Promise<{ flockId: string; chickId: string }> }
+  ) => {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { flockId, chickId } = await params;
+    const flock = await findFlockById(flockId);
+
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
+
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const chick = await findChickById(chickId);
+
+    if (!chick) {
+      return NextResponse.json({ error: "Chick not found" }, { status: 404 });
+    }
+
+    if (chick.flockId !== flockId) {
       return NextResponse.json(
-        { error: "Name must be 50 characters or less" },
-        { status: 400 }
+        { error: "Chick not in this flock" },
+        { status: 404 }
       );
     }
+
+    const body = await request.json();
+    const { name, breed, hatchDate, description, photoUrl } = body;
+
+    // Validate name if provided
+    if (name !== undefined) {
+      if (typeof name !== "string" || name.trim().length === 0) {
+        return NextResponse.json(
+          { error: "Name cannot be empty" },
+          { status: 400 }
+        );
+      }
+      if (name.length > 50) {
+        return NextResponse.json(
+          { error: "Name must be 50 characters or less" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const updateData: {
+      name?: string;
+      breed?: string | null;
+      hatchDate?: Date | null;
+      description?: string | null;
+      photoUrl?: string | null;
+    } = {};
+
+    if (name !== undefined) updateData.name = name.trim();
+    if (breed !== undefined) updateData.breed = breed?.trim() || null;
+    if (hatchDate !== undefined)
+      updateData.hatchDate = hatchDate ? new Date(hatchDate) : null;
+    if (description !== undefined)
+      updateData.description = description?.trim() || null;
+    if (photoUrl !== undefined) updateData.photoUrl = photoUrl || null;
+
+    const updatedChick = await updateChick(chickId, updateData);
+    return NextResponse.json(updatedChick);
   }
+);
 
-  const updateData: {
-    name?: string;
-    breed?: string | null;
-    hatchDate?: Date | null;
-    description?: string | null;
-    photoUrl?: string | null;
-  } = {};
+export const DELETE = withErrorHandler(
+  async (
+    _request: Request,
+    { params }: { params: Promise<{ flockId: string; chickId: string }> }
+  ) => {
+    const session = await auth();
 
-  if (name !== undefined) updateData.name = name.trim();
-  if (breed !== undefined) updateData.breed = breed?.trim() || null;
-  if (hatchDate !== undefined)
-    updateData.hatchDate = hatchDate ? new Date(hatchDate) : null;
-  if (description !== undefined)
-    updateData.description = description?.trim() || null;
-  if (photoUrl !== undefined) updateData.photoUrl = photoUrl || null;
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const updatedChick = await updateChick(chickId, updateData);
-  return NextResponse.json(updatedChick);
-}
+    const { flockId, chickId } = await params;
+    const flock = await findFlockById(flockId);
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ flockId: string; chickId: string }> }
-) {
-  const session = await auth();
+    if (!flock) {
+      return NextResponse.json({ error: "Flock not found" }, { status: 404 });
+    }
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (flock.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const chick = await findChickById(chickId);
+
+    if (!chick) {
+      return NextResponse.json({ error: "Chick not found" }, { status: 404 });
+    }
+
+    if (chick.flockId !== flockId) {
+      return NextResponse.json(
+        { error: "Chick not in this flock" },
+        { status: 404 }
+      );
+    }
+
+    // Collect all photo URLs for cloud storage cleanup
+    const photoUrls = chick.photos.flatMap((p) => [p.imageUrl, p.thumbnailUrl]);
+
+    // Delete from database (cascade deletes photos and notes)
+    await deleteChick(chickId);
+
+    // Clean up cloud storage (non-blocking, errors are logged but don't fail the request)
+    if (photoUrls.length > 0) {
+      deleteChickPhotos(photoUrls).catch((err) => {
+        console.error("Failed to clean up cloud storage:", err);
+      });
+    }
+
+    return NextResponse.json({ success: true });
   }
-
-  const { flockId, chickId } = await params;
-  const flock = await findFlockById(flockId);
-
-  if (!flock) {
-    return NextResponse.json({ error: "Flock not found" }, { status: 404 });
-  }
-
-  if (flock.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const chick = await findChickById(chickId);
-
-  if (!chick) {
-    return NextResponse.json({ error: "Chick not found" }, { status: 404 });
-  }
-
-  if (chick.flockId !== flockId) {
-    return NextResponse.json(
-      { error: "Chick not in this flock" },
-      { status: 404 }
-    );
-  }
-
-  // Collect all photo URLs for cloud storage cleanup
-  const photoUrls = chick.photos.flatMap((p) => [p.imageUrl, p.thumbnailUrl]);
-
-  // Delete from database (cascade deletes photos and notes)
-  await deleteChick(chickId);
-
-  // Clean up cloud storage (non-blocking, errors are logged but don't fail the request)
-  if (photoUrls.length > 0) {
-    deleteChickPhotos(photoUrls).catch((err) => {
-      console.error("Failed to clean up cloud storage:", err);
-    });
-  }
-
-  return NextResponse.json({ success: true });
-}
+);

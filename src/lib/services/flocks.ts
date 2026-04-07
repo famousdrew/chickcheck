@@ -1,5 +1,6 @@
 import { FlockStatus } from "@prisma/client";
 import { prisma } from "../prisma";
+import { getTodayInPacific, normalizeDateToPacific } from "../utils/timezone";
 
 export async function createFlock(
   userId: string,
@@ -20,9 +21,6 @@ export async function createFlock(
 export async function findFlockById(id: string) {
   return prisma.flock.findUnique({
     where: { id },
-    include: {
-      taskCompletions: true,
-    },
   });
 }
 
@@ -75,14 +73,18 @@ export async function deleteFlock(id: string) {
 }
 
 export function calculateCurrentWeek(startDate: Date): number {
-  const now = new Date();
-  const diffTime = now.getTime() - startDate.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const today = getTodayInPacific();
+  const start = normalizeDateToPacific(startDate);
+  const diffDays = Math.floor(
+    (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+  );
   return Math.min(Math.floor(diffDays / 7) + 1, 8);
 }
 
 export function calculateCurrentDay(startDate: Date): number {
-  const now = new Date();
-  const diffTime = now.getTime() - startDate.getTime();
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  const today = getTodayInPacific();
+  const start = normalizeDateToPacific(startDate);
+  return (
+    Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+  );
 }

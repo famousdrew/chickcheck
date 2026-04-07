@@ -33,6 +33,20 @@ export async function undoTaskCompletion(
   taskId: string,
   dayDate: Date
 ) {
+  const existing = await prisma.taskCompletion.findUnique({
+    where: {
+      flockId_taskId_dayDate: {
+        flockId,
+        taskId,
+        dayDate,
+      },
+    },
+  });
+
+  if (!existing) {
+    return null;
+  }
+
   return prisma.taskCompletion.update({
     where: {
       flockId_taskId_dayDate: {
@@ -57,6 +71,20 @@ export async function findCompletionsByFlock(flockId: string) {
       task: true,
     },
     orderBy: { completedAt: "desc" },
+  });
+}
+
+export async function findCompletionsByFlockDateRange(
+  flockId: string,
+  startDate: Date,
+  endDate: Date
+) {
+  return prisma.taskCompletion.findMany({
+    where: {
+      flockId,
+      dayDate: { gte: startDate, lte: endDate },
+      undoneAt: null,
+    },
   });
 }
 

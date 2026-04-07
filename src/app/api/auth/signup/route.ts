@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/services/users";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,18 @@ const MIN_PASSWORD_LENGTH = 8;
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 5 signups per IP per 15 minutes
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    const { allowed } = rateLimit(`signup:${ip}`, 5, 15 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many signup attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -19,8 +32,11 @@ export async function POST(request: Request) {
       );
     }
 
+    // Normalize email
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Validate email format
-    if (!EMAIL_REGEX.test(email)) {
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
@@ -36,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     // Check if user already exists
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await findUserByEmail(normalizedEmail);
     if (existingUser) {
       return NextResponse.json(
         { error: "An account with this email already exists" },
@@ -45,7 +61,7 @@ export async function POST(request: Request) {
     }
 
     // Create the user
-    const user = await createUser(email, password);
+    const user = await createUser(normalizedEmail, password);
 
     // Return user without password hash
     return NextResponse.json(

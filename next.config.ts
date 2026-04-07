@@ -15,11 +15,17 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  // Output standalone for optimized Docker/Railway deployment
-  output: "standalone",
-
   // Disable x-powered-by header for security
   poweredByHeader: false,
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+    ],
+  },
 };
 
 export default withPWA(nextConfig);

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Modal from "@/components/Modal";
 
 interface Photo {
   id: string;
@@ -27,12 +28,12 @@ export default function PhotoGallery({
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleDelete = async (photoId: string) => {
-    if (!confirm("Delete this photo?")) return;
-
     setIsDeleting(true);
     setDeleteError("");
+    setShowDeleteConfirm(false);
 
     try {
       const response = await fetch(
@@ -111,76 +112,108 @@ export default function PhotoGallery({
       </div>
 
       {/* Full-size photo modal */}
-      {selectedPhoto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/80"
-            onClick={() => setSelectedPhoto(null)}
-          />
+      <Modal
+        isOpen={!!selectedPhoto}
+        onClose={() => setSelectedPhoto(null)}
+        ariaLabel="Photo viewer"
+        maxWidth="max-w-4xl"
+      >
+        {selectedPhoto && (
+          <div className="-m-6">
+            <div className="relative">
+              <Image
+                src={selectedPhoto.imageUrl}
+                alt={`Photo from ${formatDate(selectedPhoto.takenAt)}`}
+                width={800}
+                height={600}
+                className="max-h-[85vh] w-full rounded-lg object-contain"
+                unoptimized
+              />
 
-          <div className="relative max-h-[90vh] max-w-4xl">
-            <img
-              src={selectedPhoto.imageUrl}
-              alt={`Photo from ${formatDate(selectedPhoto.takenAt)}`}
-              className="max-h-[85vh] rounded-lg object-contain"
-            />
+              <div className="absolute top-4 right-4 flex gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  disabled={isDeleting}
+                  className="bg-barn-500 hover:bg-barn-600 rounded-full p-2 text-white disabled:opacity-50"
+                  aria-label="Delete photo"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setSelectedPhoto(null)}
+                  className="text-wood-dark rounded-full bg-white/90 p-2 hover:bg-white"
+                  aria-label="Close"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
 
-            <div className="absolute top-4 right-4 flex gap-2">
-              <button
-                onClick={() => handleDelete(selectedPhoto.id)}
-                disabled={isDeleting}
-                className="bg-barn-500 hover:bg-barn-600 rounded-full p-2 text-white disabled:opacity-50"
-                aria-label="Delete photo"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              <div className="absolute bottom-4 left-4 rounded bg-black/50 px-3 py-1.5 text-sm text-white">
+                {formatDate(selectedPhoto.takenAt)}
+                {selectedPhoto.weekNumber &&
+                  ` • Week ${selectedPhoto.weekNumber}`}
+              </div>
+
+              {deleteError && (
+                <div
+                  className="bg-barn-500 absolute right-4 bottom-4 rounded px-3 py-1.5 text-sm text-white"
+                  role="alert"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() => setSelectedPhoto(null)}
-                className="text-wood-dark rounded-full bg-white/90 p-2 hover:bg-white"
-                aria-label="Close"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  {deleteError}
+                </div>
+              )}
             </div>
 
-            <div className="absolute bottom-4 left-4 rounded bg-black/50 px-3 py-1.5 text-sm text-white">
-              {formatDate(selectedPhoto.takenAt)}
-              {selectedPhoto.weekNumber &&
-                ` • Week ${selectedPhoto.weekNumber}`}
-            </div>
-
-            {deleteError && (
-              <div className="bg-barn-500 absolute right-4 bottom-4 rounded px-3 py-1.5 text-sm text-white">
-                {deleteError}
+            {/* Delete confirmation inline */}
+            {showDeleteConfirm && (
+              <div className="border-wood-dark/10 border-t bg-white p-4">
+                <p className="text-wood-dark/70 mb-3 text-sm">
+                  Delete this photo? This cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="border-wood-dark/20 text-wood-dark hover:bg-wood-dark/5 rounded-rustic flex-1 border px-3 py-1.5 text-sm font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleDelete(selectedPhoto.id)}
+                    disabled={isDeleting}
+                    className="bg-barn-500 hover:bg-barn-600 disabled:bg-barn-500/50 rounded-rustic flex-1 px-3 py-1.5 text-sm font-medium text-white transition-colors"
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </>
   );
 }

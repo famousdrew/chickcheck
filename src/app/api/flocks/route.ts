@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth";
 import { createFlock, findFlocksByUserId } from "@/lib/services/flocks";
+import { withErrorHandler } from "@/lib/api-handler";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export const GET = withErrorHandler(async () => {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -11,9 +12,9 @@ export async function GET() {
 
   const flocks = await findFlocksByUserId(session.user.id);
   return NextResponse.json(flocks);
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withErrorHandler(async (request: Request) => {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -23,6 +24,13 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { name, startDate } = body;
 
+  if (name && typeof name === "string" && name.length > 100) {
+    return NextResponse.json(
+      { error: "Flock name must be 100 characters or less" },
+      { status: 400 }
+    );
+  }
+
   const flock = await createFlock(
     session.user.id,
     name || "My Flock",
@@ -30,4 +38,4 @@ export async function POST(request: Request) {
   );
 
   return NextResponse.json(flock, { status: 201 });
-}
+});

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { TaskCategory, TaskFrequency, FlockStatus } from "@prisma/client";
 import TaskItem from "./TaskItem";
 import TemperatureCard from "./TemperatureCard";
 import FlockDashboardHeader from "./FlockDashboardHeader";
+import NotificationPrompt from "@/components/NotificationPrompt";
+import { useTaskReminder } from "@/hooks/useTaskReminder";
 
 interface Task {
   id: string;
@@ -19,6 +22,16 @@ interface Task {
   isCompleted: boolean;
 }
 
+interface OverdueTask {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  frequency: string;
+  dayNumber: number | null;
+  missedDay: number;
+}
+
 interface TaskListProps {
   flockId: string;
   flock: {
@@ -31,13 +44,17 @@ interface TaskListProps {
 }
 
 export default function TaskList({ flockId, flock }: TaskListProps) {
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [overdueTasks, setOverdueTasks] = useState<OverdueTask[]>([]);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [currentDay, setCurrentDay] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
+  const [showOverdue, setShowOverdue] = useState(true);
+  const [isGraduating, setIsGraduating] = useState(false);
 
   const fetchTasks = useCallback(
     async (week?: number) => {
@@ -51,6 +68,7 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
 
         const data = await response.json();
         setTasks(data.tasks);
+        setOverdueTasks(data.overdueTasks || []);
         setCurrentWeek(data.currentWeek);
         setCurrentDay(data.currentDay);
         if (week === undefined) {
@@ -77,6 +95,44 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
     fetchTasks();
   }, [fetchTasks]);
 
+  async function handleGraduate() {
+    setIsGraduating(true);
+    try {
+      await fetch(`/api/flocks/${flockId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "GRADUATED" }),
+      });
+      router.refresh();
+    } catch {
+      setError("Failed to graduate flock");
+    } finally {
+      setIsGraduating(false);
+    }
+  }
+
+  const showGraduationBanner = currentWeek >= 8 && flock.status === "ACTIVE";
+
+  // Compute pending count for notifications (safe to call before early returns)
+  const isViewingCurrentWeek = selectedWeek === currentWeek;
+  const todaysTasks = isViewingCurrentWeek
+    ? tasks.filter(
+        (t) =>
+          t.frequency === "DAILY" ||
+          (t.dayNumber !== null && t.dayNumber === currentDay)
+      )
+    : [];
+  const pendingTasks = todaysTasks.filter((t) => !t.isCompleted);
+  const completedTasks = todaysTasks.filter((t) => t.isCompleted);
+
+  // Browser notifications for pending/overdue tasks (must be before early returns)
+  useTaskReminder({
+    flockId: flock.status === "ACTIVE" ? flockId : null,
+    pendingCount: pendingTasks.length,
+    overdueCount: overdueTasks.length,
+    isActive: isViewingCurrentWeek && !isLoading,
+  });
+
   if (isLoading) {
     return (
       <div className="rounded-rustic shadow-rustic bg-white p-8">
@@ -95,19 +151,6 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
     );
   }
 
-  const isViewingCurrentWeek = selectedWeek === currentWeek;
-
-  // For current week: separate into today's tasks and upcoming
-  // For other weeks: show all tasks for that week
-  const todaysTasks = isViewingCurrentWeek
-    ? tasks.filter(
-        (t) =>
-          t.frequency === "DAILY" ||
-          (t.dayNumber !== null && t.dayNumber === currentDay)
-      )
-    : [];
-  const pendingTasks = todaysTasks.filter((t) => !t.isCompleted);
-  const completedTasks = todaysTasks.filter((t) => t.isCompleted);
   const upcomingTasks = isViewingCurrentWeek
     ? tasks.filter(
         (t) =>
@@ -140,8 +183,104 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
         totalCount={totalCount}
       />
 
+      {/* Notification prompt */}
+      {flock.status === "ACTIVE" && <NotificationPrompt />}
+
       {/* Temperature Card */}
       <TemperatureCard weekNumber={selectedWeek} />
+
+      {/* Graduation banner */}
+      {showGraduationBanner && (
+        <div className="rounded-rustic shadow-rustic bg-purple-50 p-6 text-center">
+          <h3 className="font-display text-lg font-bold text-purple-800">
+            Congratulations!
+          </h3>
+          <p className="text-wood-dark/70 mt-1 text-sm">
+            Your flock has completed the 8-week brooding program. Ready to
+            graduate?
+          </p>
+          <button
+            onClick={handleGraduate}
+            disabled={isGraduating}
+            className="rounded-rustic mt-3 bg-purple-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
+          >
+            {isGraduating ? "Graduating..." : "Graduate Flock!"}
+          </button>
+        </div>
+      )}
+
+      {/* Overdue Tasks - only show for current week */}
+      {isViewingCurrentWeek && overdueTasks.length > 0 && (
+        <div className="rounded-rustic shadow-rustic border-barn-500/30 border bg-rose-50 p-6">
+          <button
+            onClick={() => setShowOverdue(!showOverdue)}
+            className="flex w-full items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <svg
+                className="text-barn-500 h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+              <h3 className="font-display text-barn-600 text-lg font-bold">
+                Overdue ({overdueTasks.length})
+              </h3>
+            </div>
+            <svg
+              className={`text-barn-500/50 h-5 w-5 transition-transform ${
+                showOverdue ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          {showOverdue && (
+            <div className="mt-4 space-y-2">
+              {overdueTasks.map((task, i) => (
+                <div
+                  key={`${task.id}-${task.missedDay}-${i}`}
+                  className="rounded-rustic border-barn-500/20 border bg-white p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h4 className="text-wood-dark text-sm font-medium">
+                        {task.title}
+                      </h4>
+                      <p className="text-wood-dark/60 mt-0.5 text-xs">
+                        {task.description}
+                      </p>
+                    </div>
+                    <span className="text-barn-500 flex-shrink-0 text-xs font-medium">
+                      Day {task.missedDay}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              <p className="text-barn-500/70 pt-1 text-xs">
+                {overdueTasks.some((t) => t.frequency === "DAILY")
+                  ? "Daily tasks shown are from yesterday. One-time tasks are from earlier this week."
+                  : "These tasks were scheduled for earlier this week."}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Today's Tasks - only show for current week */}
       {isViewingCurrentWeek && (

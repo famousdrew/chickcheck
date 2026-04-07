@@ -900,4 +900,347 @@ Consider adding apple cider vinegar (1 tbsp per gallon) for digestive health.`,
     category: TaskCategory.MILESTONE,
     sortOrder: 18,
   },
+  // ============================================
+  // WEEK 6: THE BIG MOVE
+  // ============================================
+
+  // Daily tasks
+  {
+    title: "Check brooder/coop temperature",
+    description: "Maintain 70°F at chick level",
+    detailedContent: `Lower to 70°F. Many chickens at this age no longer need supplemental heat if indoor temperatures are above 65°F. Watch their behavior—if they're comfortable and active, the temperature is fine.`,
+    weekNumber: 6,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.BROODER_CARE,
+    sortOrder: 1,
+  },
+  {
+    title: "Morning care",
+    description: "Water, feed, health check",
+    detailedContent: `Morning care:
+• Fresh water and feed
+• Quick health assessment
+• Check coop conditions if transitioned
+• Observe flock dynamics for any bullying`,
+    weekNumber: 6,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 2,
+  },
+  {
+    title: "Evening care",
+    description: "Water, feed, secure coop",
+    detailedContent: `Evening care:
+• Refill water and check feed
+• Ensure all birds are inside coop before closing up
+• Check coop security (latches, doors)
+• Observe roosting behavior`,
+    weekNumber: 6,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 3,
+  },
+
+  // Transition tasks
+  {
+    title: "Begin coop transition",
+    description: "Move chickens to coop for daytime hours",
+    detailedContent: `Start the coop transition:
+• Move chickens to coop in the morning
+• Ensure feed and water are available in the coop
+• Supervise for the first few hours
+• Return to brooder at night for the first 2-3 days
+• Gradually extend coop time until they stay overnight`,
+    weekNumber: 6,
+    dayNumber: 36,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.ENVIRONMENT,
+    sortOrder: 10,
+  },
+  {
+    title: "First overnight in coop",
+    description: "Let chickens sleep in the coop",
+    detailedContent: `After 2-3 days of daytime coop use:
+• Place chickens on roosts at dusk (they may not find them on their own yet)
+• Close coop securely
+• Check on them once after dark—they should be settled on roosts
+• Open coop early in the morning
+
+Don't worry if they huddle on the floor the first night. They'll figure out roosting!`,
+    weekNumber: 6,
+    dayNumber: 38,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.ENVIRONMENT,
+    sortOrder: 11,
+  },
+  {
+    title: "Supervised run time",
+    description: "Allow access to outdoor run",
+    detailedContent: `With chickens now in the coop, allow supervised access to the attached run:
+• Open the pop door in the morning
+• Watch how they navigate the new space
+• Ensure they can find their way back inside
+• Close the pop door at dusk`,
+    weekNumber: 6,
+    dayNumber: 39,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.ENVIRONMENT,
+    sortOrder: 12,
+  },
+  {
+    title: "Transition to grower feed",
+    description: "Switch from starter to grower feed",
+    detailedContent: `At 6 weeks, transition from chick starter to grower feed:
+• Mix 75% starter with 25% grower for 2-3 days
+• Then 50/50 for 2-3 days
+• Then 25% starter / 75% grower
+• Full grower feed by end of week
+
+Grower feed has slightly less protein (16-18%) which is appropriate for this age.`,
+    weekNumber: 6,
+    dayNumber: 36,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 13,
+  },
+  {
+    title: "Week 6 milestone check",
+    description: "Verify coop transition progress",
+    detailedContent: `By end of Week 6, your chickens should be:
+• Spending most or all time in the coop and run
+• Finding food and water in the coop reliably
+• Beginning to roost at night (some may still floor-sleep)
+• Fully feathered and looking like young adult chickens
+• Comfortable with their outdoor environment
+• Transitioning to grower feed`,
+    weekNumber: 6,
+    dayNumber: 42,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.MILESTONE,
+    sortOrder: 14,
+  },
+
+  // ============================================
+  // WEEK 7: SETTLING IN
+  // ============================================
+
+  // Daily tasks
+  {
+    title: "Morning coop routine",
+    description: "Open coop, fresh water & feed, health check",
+    detailedContent: `Morning routine:
+• Open pop door to the run
+• Fresh water and feed
+• Quick headcount and health scan
+• Check for any signs of respiratory issues (sneezing, discharge)
+• Clean any overnight droppings from roost area`,
+    weekNumber: 7,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 1,
+  },
+  {
+    title: "Evening coop routine",
+    description: "Secure coop, refill water, headcount",
+    detailedContent: `Evening routine:
+• Refill water and check feed
+• Wait for all chickens to go inside at dusk
+• Do a headcount
+• Close and secure the pop door
+• Check coop perimeter for any predator activity`,
+    weekNumber: 7,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 2,
+  },
+
+  // Weekly tasks
+  {
+    title: "Deep coop clean",
+    description: "Full bedding replacement and sanitize",
+    detailedContent: `Weekly deep clean:
+• Remove all soiled bedding
+• Scrub waterers and feeders
+• Check for any damage to coop structure
+• Replace with fresh pine shavings (4-6 inches)
+• Check roost bars are secure
+• Inspect for any signs of pests (mites, lice)`,
+    weekNumber: 7,
+    dayNumber: 46,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.BROODER_CARE,
+    sortOrder: 10,
+  },
+  {
+    title: "Expand foraging area",
+    description: "Allow supervised free-ranging if possible",
+    detailedContent: `If your yard is secure, try supervised free-ranging:
+• Start with 30-60 minutes in a fenced area
+• Use your training call to bring them back
+• Watch for predators (hawks, neighborhood cats/dogs)
+• Gradually increase free-range time as they learn boundaries
+
+If free-ranging isn't possible, add enrichment to the run: hanging cabbage, scattered treats, logs to perch on.`,
+    weekNumber: 7,
+    dayNumber: 44,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.ENVIRONMENT,
+    sortOrder: 11,
+  },
+  {
+    title: "Health assessment",
+    description: "Thorough individual health check",
+    detailedContent: `Do a thorough check of each bird:
+• Check feet for bumblefoot or injuries
+• Look at feathers for mites or bare patches
+• Check eyes and nostrils for discharge
+• Feel the crop—should be full in evening, empty in morning
+• Check vent area is clean
+• Weigh each bird if possible to track growth`,
+    weekNumber: 7,
+    dayNumber: 47,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.HEALTH_CHECK,
+    sortOrder: 12,
+  },
+  {
+    title: "Week 7 milestone check",
+    description: "Verify settled coop life",
+    detailedContent: `By end of Week 7, your chickens should be:
+• Fully settled into coop life with a daily routine
+• Roosting at night (most of them)
+• Comfortable going in and out of the coop/run
+• Responding to your training call
+• Showing distinct breed characteristics
+• Eating grower feed confidently
+• Dust bathing regularly`,
+    weekNumber: 7,
+    dayNumber: 49,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.MILESTONE,
+    sortOrder: 13,
+  },
+
+  // ============================================
+  // WEEK 8: GRADUATION
+  // ============================================
+
+  // Daily tasks
+  {
+    title: "Morning coop routine",
+    description: "Standard morning care",
+    detailedContent: `Your morning routine is well-established by now:
+• Open pop door
+• Fresh water and feed
+• Quick health scan and headcount
+• Enjoy watching your flock start their day!`,
+    weekNumber: 8,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 1,
+  },
+  {
+    title: "Evening coop routine",
+    description: "Standard evening care",
+    detailedContent: `Evening routine:
+• Refill water and check feed levels
+• Headcount as they go to roost
+• Secure coop for the night
+• Quick perimeter check`,
+    weekNumber: 8,
+    frequency: TaskFrequency.DAILY,
+    category: TaskCategory.FEEDING_WATER,
+    sortOrder: 2,
+  },
+
+  // Final week tasks
+  {
+    title: "Remove supplemental heat",
+    description: "Fully wean off heat source if not already done",
+    detailedContent: `By week 8, your chickens should not need any supplemental heat unless temperatures drop below 50°F. They are fully feathered and can regulate their own body temperature.
+
+If you're still providing heat, now is the time to remove it completely (unless extreme cold weather).`,
+    weekNumber: 8,
+    dayNumber: 50,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.BROODER_CARE,
+    sortOrder: 10,
+  },
+  {
+    title: "Establish long-term care routine",
+    description: "Set up your ongoing chicken care schedule",
+    detailedContent: `Now that the intensive brooding phase is over, establish your long-term routine:
+
+Daily:
+• Morning: open coop, fresh water & feed, health scan
+• Evening: close coop, refill water, headcount
+
+Weekly:
+• Deep clean coop, replace bedding
+• Thorough health check
+
+Monthly:
+• Check coop structure for repairs
+• Assess feed consumption and adjust
+• Update flock records`,
+    weekNumber: 8,
+    dayNumber: 52,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.ENVIRONMENT,
+    sortOrder: 11,
+  },
+  {
+    title: "Final health assessment",
+    description: "Complete health check before graduation",
+    detailedContent: `Final brooding-phase health check:
+• Weigh each bird and record
+• Check for any ongoing health concerns
+• Verify all birds are fully feathered
+• Assess flock dynamics—any persistent bullying?
+• Take graduation photos!
+
+Note any birds that may need extra attention going forward.`,
+    weekNumber: 8,
+    dayNumber: 54,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.HEALTH_CHECK,
+    sortOrder: 12,
+  },
+  {
+    title: "Disassemble brooder",
+    description: "Clean and store brooder equipment",
+    detailedContent: `Time to pack up the brooder:
+• Thoroughly clean and disinfect the brooder
+• Clean and store heat source
+• Wash and store chick-sized feeders/waterers
+• Save any supplies you might need for future flocks
+• Pat yourself on the back—you did it!`,
+    weekNumber: 8,
+    dayNumber: 55,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.PREPARATION,
+    sortOrder: 13,
+  },
+  {
+    title: "Graduation! Week 8 milestone",
+    description: "Celebrate completing the brooding phase",
+    detailedContent: `Congratulations! You've successfully raised your chicks through the critical first 8 weeks!
+
+Your flock has graduated from:
+• Tiny fluffballs needing 95°F heat → fully feathered birds
+• Paper towel bedding → a proper coop with roosts
+• Constant monitoring → a comfortable daily routine
+
+What's ahead:
+• Continue grower feed until 16-18 weeks
+• Watch for first eggs around 18-24 weeks (depending on breed)
+• Keep learning and enjoying your backyard flock!
+
+You're officially a chicken keeper. Welcome to the club!`,
+    weekNumber: 8,
+    dayNumber: 56,
+    frequency: TaskFrequency.ONCE,
+    category: TaskCategory.MILESTONE,
+    sortOrder: 14,
+  },
 ];

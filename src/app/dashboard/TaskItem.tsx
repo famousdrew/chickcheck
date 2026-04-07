@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TaskCategory, TaskFrequency } from "@prisma/client";
 
 interface TaskItemProps {
@@ -57,6 +57,17 @@ export default function TaskItem({
 }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [optimisticCompleted, setOptimisticCompleted] = useState<
+    boolean | null
+  >(null);
+
+  // Reset optimistic state when server data arrives
+  useEffect(() => {
+    setOptimisticCompleted(null);
+  }, [task.isCompleted]);
+
+  const isCompleted =
+    optimisticCompleted !== null ? optimisticCompleted : task.isCompleted;
 
   const style = categoryStyles[task.category];
   const isApplicableToday =
@@ -67,18 +78,23 @@ export default function TaskItem({
     if (isLoading) return;
     setIsLoading(true);
 
+    const newState = !isCompleted;
+    setOptimisticCompleted(newState);
+
     try {
-      await fetch(`/api/flocks/${flockId}/completions`, {
+      const response = await fetch(`/api/flocks/${flockId}/completions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           taskId: task.id,
-          action: task.isCompleted ? "undo" : "complete",
+          action: newState ? "complete" : "undo",
         }),
       });
+      if (!response.ok) throw new Error("Failed to toggle task");
       onToggle();
     } catch (error) {
       console.error("Failed to toggle task:", error);
+      setOptimisticCompleted(null);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +103,7 @@ export default function TaskItem({
   return (
     <div
       className={`rounded-rustic border transition-all ${
-        task.isCompleted
+        isCompleted
           ? "border-grass-500/30 bg-grass-500/5"
           : "border-wood-dark/10 bg-white"
       }`}
@@ -97,17 +113,15 @@ export default function TaskItem({
           onClick={handleToggle}
           disabled={isLoading || !isApplicableToday}
           className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border transition-colors ${
-            task.isCompleted
+            isCompleted
               ? "border-grass-500 bg-grass-500 text-white"
               : isApplicableToday
                 ? "border-wood-dark/30 hover:border-grass-500"
                 : "border-wood-dark/10 cursor-not-allowed bg-gray-50"
           }`}
-          aria-label={
-            task.isCompleted ? "Mark as incomplete" : "Mark as complete"
-          }
+          aria-label={isCompleted ? "Mark as incomplete" : "Mark as complete"}
         >
-          {task.isCompleted && (
+          {isCompleted && (
             <svg
               className="h-3 w-3"
               fill="none"
@@ -128,7 +142,7 @@ export default function TaskItem({
           <div className="flex flex-wrap items-center gap-2">
             <h3
               className={`font-medium ${
-                task.isCompleted
+                isCompleted
                   ? "text-wood-dark/50 line-through"
                   : "text-wood-dark"
               }`}
@@ -147,7 +161,7 @@ export default function TaskItem({
           </div>
 
           <p
-            className={`mt-1 text-sm ${task.isCompleted ? "text-wood-dark/40" : "text-wood-dark/70"}`}
+            className={`mt-1 text-sm ${isCompleted ? "text-wood-dark/40" : "text-wood-dark/70"}`}
           >
             {task.description}
           </p>

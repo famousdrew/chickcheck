@@ -30,6 +30,7 @@ export default function NotesList({
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const handleAddNote = async (e: React.FormEvent) => {
@@ -92,8 +93,7 @@ export default function NotesList({
   };
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!confirm("Delete this note?")) return;
-
+    setDeletingId(null);
     setError("");
 
     try {
@@ -227,19 +227,37 @@ export default function NotesList({
                       {formatTime(note.createdAt)}
                       {note.weekNumber && ` • Week ${note.weekNumber}`}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => startEditing(note)}
                         className="text-wood-dark/40 hover:text-wood-dark text-xs"
                       >
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleDeleteNote(note.id)}
-                        className="text-wood-dark/40 hover:text-barn-500 text-xs"
-                      >
-                        Delete
-                      </button>
+                      {deletingId === note.id ? (
+                        <>
+                          <span className="text-barn-500 text-xs">Delete?</span>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            className="text-barn-500 hover:text-barn-600 text-xs font-medium"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            onClick={() => setDeletingId(null)}
+                            className="text-wood-dark/40 hover:text-wood-dark text-xs"
+                          >
+                            No
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setDeletingId(note.id)}
+                          className="text-wood-dark/40 hover:text-barn-500 text-xs"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   </div>
                 </>
