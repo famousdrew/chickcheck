@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function SignupPage() {
@@ -11,6 +12,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("Creating account...");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +39,20 @@ export default function SignupPage() {
         return;
       }
 
-      // Redirect to login on success
-      router.push("/login?registered=true");
+      // Auto-login after signup
+      setLoadingText("Setting up...");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.ok) {
+        router.push("/dashboard");
+      } else {
+        // Fallback: redirect to login if auto-login fails
+        router.push("/login?registered=true");
+      }
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -130,7 +144,7 @@ export default function SignupPage() {
               disabled={isLoading}
               className="rounded-rustic bg-grass-500 hover:bg-grass-500/90 w-full px-4 py-2 font-medium text-white transition-colors disabled:opacity-50"
             >
-              {isLoading ? "Creating account..." : "Create Account"}
+              {isLoading ? loadingText : "Create Account"}
             </button>
           </form>
 

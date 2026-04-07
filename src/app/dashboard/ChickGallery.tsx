@@ -78,9 +78,16 @@ export default function ChickGallery({ flockId }: ChickGalleryProps) {
     <>
       <div className="rounded-rustic shadow-rustic bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-wood-dark text-lg font-bold">
-            My Chicks
-          </h2>
+          <div>
+            <h2 className="font-display text-wood-dark text-lg font-bold">
+              My Chicks
+            </h2>
+            {chicks.length > 0 && (
+              <p className="text-wood-dark/50 text-xs">
+                Tap a chick to add photos and notes.
+              </p>
+            )}
+          </div>
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-grass-500 hover:bg-grass-500/90 rounded-rustic flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors"

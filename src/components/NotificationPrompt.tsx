@@ -3,13 +3,30 @@
 import { useState } from "react";
 import { useNotifications } from "@/hooks/useNotifications";
 
+function isTooEarlyForPrompt(): boolean {
+  if (typeof window === "undefined") return true;
+  const created = localStorage.getItem("chickcheck:flockCreatedAt");
+  if (!created) {
+    localStorage.setItem("chickcheck:flockCreatedAt", Date.now().toString());
+    return true;
+  }
+  return Date.now() - parseInt(created, 10) < 24 * 60 * 60 * 1000;
+}
+
 export default function NotificationPrompt() {
   const { supported, permission, requestPermission, isDismissed, dismiss } =
     useNotifications();
   const [isHidden, setIsHidden] = useState(false);
+  const [tooEarly] = useState(isTooEarlyForPrompt);
 
-  // Don't show if: not supported, already granted/denied, dismissed, or hidden
-  if (!supported || permission !== "default" || isDismissed() || isHidden) {
+  // Don't show if: not supported, already granted/denied, dismissed, hidden, or too early
+  if (
+    !supported ||
+    permission !== "default" ||
+    isDismissed() ||
+    isHidden ||
+    tooEarly
+  ) {
     return null;
   }
 

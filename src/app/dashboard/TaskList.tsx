@@ -285,9 +285,15 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
       {/* Today's Tasks - only show for current week */}
       {isViewingCurrentWeek && (
         <div className="rounded-rustic shadow-rustic bg-white p-6">
-          <h3 className="font-display text-wood-dark mb-4 text-lg font-bold">
+          <h3 className="font-display text-wood-dark text-lg font-bold">
             Today&apos;s Tasks
           </h3>
+          {pendingTasks.length > 0 && (
+            <p className="text-wood-dark/50 mb-4 text-xs">
+              Check these off as you go through your day.
+            </p>
+          )}
+          {pendingTasks.length === 0 && <div className="mb-4" />}
           {pendingTasks.length === 0 && completedTasks.length === 0 ? (
             <p className="text-wood-dark/50 py-4 text-center">
               No tasks for today. Great job!
@@ -402,9 +408,12 @@ export default function TaskList({ flockId, flock }: TaskListProps) {
       {/* Upcoming Tasks - only show for current week */}
       {isViewingCurrentWeek && upcomingTasks.length > 0 && (
         <div className="rounded-rustic shadow-rustic bg-white p-6">
-          <h3 className="font-display text-wood-dark mb-4 text-lg font-bold">
+          <h3 className="font-display text-wood-dark text-lg font-bold">
             Coming Up This Week
           </h3>
+          <p className="text-wood-dark/50 mb-4 text-xs">
+            Scheduled for later this week — no action needed yet.
+          </p>
           <div className="space-y-3">
             {upcomingTasks.slice(0, 5).map((task) => (
               <TaskItem

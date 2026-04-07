@@ -2,7 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { findFlocksByUserId } from "@/lib/services/flocks";
 import SignOutButton from "./SignOutButton";
-import CreateFlockForm from "./CreateFlockForm";
+import WelcomeSetup from "./WelcomeSetup";
+import JourneyOverview from "./JourneyOverview";
 import TaskList from "./TaskList";
 import ChickGallery from "./ChickGallery";
 import OfflineIndicator from "@/components/OfflineIndicator";
@@ -38,9 +39,10 @@ export default async function DashboardPage() {
 
       <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
         {!activeFlock ? (
-          <CreateFlockForm />
+          <WelcomeSetup />
         ) : (
           <div className="space-y-6">
+            <JourneyOverview currentWeek={activeFlock.currentWeek} />
             <TaskList
               flockId={activeFlock.id}
               flock={{

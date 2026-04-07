@@ -162,9 +162,17 @@ export default function FlockDashboardHeader({
           <button
             onClick={() => setShowStartConfirm(true)}
             disabled={isStarting}
-            className="bg-barn-500 hover:bg-barn-500/90 disabled:bg-barn-500/50 rounded-rustic flex-shrink-0 px-3 py-1.5 text-sm font-medium text-white transition-colors"
+            className={`bg-barn-500 hover:bg-barn-500/90 disabled:bg-barn-500/50 rounded-rustic flex-shrink-0 px-3 py-1.5 text-sm font-medium text-white transition-colors ${
+              totalCount > 0 && completedCount === totalCount
+                ? "ring-barn-500/50 ring-2 ring-offset-2"
+                : ""
+            }`}
           >
-            {isStarting ? "Starting..." : "Chicks Arrived!"}
+            {isStarting
+              ? "Starting..."
+              : totalCount > 0 && completedCount === totalCount
+                ? "Ready? Chicks Arrived!"
+                : "Chicks Arrived!"}
           </button>
         ) : flock.startDate ? (
           <span className="text-wood-dark/50 flex-shrink-0 text-xs">
@@ -247,6 +255,14 @@ export default function FlockDashboardHeader({
           </svg>
         </button>
       </div>
+
+      {/* Contextual hint for preparation phase */}
+      {flock.status === "PREPARING" && (
+        <p className="text-wood-dark/50 mt-2 text-center text-xs">
+          You&apos;re on Week 0. Complete the prep tasks below, then click
+          &quot;Chicks Arrived!&quot; when they&apos;re here.
+        </p>
+      )}
 
       {/* Progress row */}
       <div className="mt-4 flex items-center justify-between gap-4">
