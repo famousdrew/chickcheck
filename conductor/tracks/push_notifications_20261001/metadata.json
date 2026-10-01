@@ -1,0 +1,8 @@
+{
+  "track_id": "push_notifications_20261001",
+  "type": "feature",
+  "status": "in_progress",
+  "created_at": "2026-10-01T19:00:00Z",
+  "updated_at": "2026-10-01T19:00:00Z",
+  "description": "Real Web Push reminders (morning, evening, new-week temperature alerts) that arrive when the app is closed"
+}

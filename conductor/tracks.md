@@ -11,3 +11,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Chick Profiles & Photo Journal**
   *Link: [./tracks/chick_profiles_20260115/](./tracks/chick_profiles_20260115/)*
   *Status: Complete - 6 phases implemented*
+
+- [ ] **Track: Push Notifications & Reminders**
+  *Link: [./tracks/push_notifications_20261001/](./tracks/push_notifications_20261001/)*
+  *Status: In Progress*
