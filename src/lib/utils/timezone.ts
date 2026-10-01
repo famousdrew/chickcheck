@@ -63,3 +63,15 @@ export function formatDateInPacific(
     ...options,
   });
 }
+
+/**
+ * Get the current hour (0-23) in Pacific timezone
+ */
+export function getCurrentHourInPacific(): number {
+  const hour = new Intl.DateTimeFormat("en-US", {
+    timeZone: PACIFIC_TIMEZONE,
+    hour: "numeric",
+    hourCycle: "h23",
+  }).format(new Date());
+  return parseInt(hour, 10);
+}

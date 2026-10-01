@@ -47,20 +47,20 @@ Let users turn push on per device and manage reminder settings.
 
 ---
 
-## Phase 3: Reminder Scheduling
+## Phase 3: Reminder Scheduling ✅
 
 ### Objective
 Send the right reminders at the right time, exactly once.
 
-- [ ] Task: Reminder content builder
-    - [ ] Write tests: morning, evening, new-week, nothing-to-send cases
-    - [ ] Count today's tasks per active flock
-- [ ] Task: Reminder job
-    - [ ] Write tests: time windows, preferences, dedupe via ReminderLog
-    - [ ] Send to all of a user's devices
-- [ ] Task: Scheduling
-    - [ ] Run every 15 minutes in-process via instrumentation.ts
-    - [ ] POST /api/cron/reminders protected by CRON_SECRET
+- [x] Task: Reminder content builder
+    - [x] Write tests: morning, evening, new-week, nothing-to-send cases
+    - [x] Count today's tasks per active flock
+- [x] Task: Reminder job
+    - [x] Write tests: time windows, preferences, dedupe via ReminderLog
+    - [x] Send to all of a user's devices
+- [x] Task: Scheduling
+    - [x] Run every 15 minutes in-process via instrumentation.ts
+    - [x] POST /api/cron/reminders protected by CRON_SECRET
 
 ---
 
