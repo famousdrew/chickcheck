@@ -30,6 +30,7 @@ ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during th
 - `src/lib/utils/storage.ts` - Vercel Blob upload utilities
 - `src/lib/utils/timezone.ts` - Pacific timezone helpers
 - `prisma/schema.prisma` - Database schema
+- `prisma/seed-data.ts` - Task content, based on the original care guide in `docs/raising-chicks-8-week-checklist.rtf`
 
 ## Deployment Notes
 
