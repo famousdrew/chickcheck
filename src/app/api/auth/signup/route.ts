@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUser, findUserByEmail } from "@/lib/services/users";
-import { rateLimit } from "@/lib/rate-limit";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -10,9 +10,7 @@ const MIN_PASSWORD_LENGTH = 8;
 export async function POST(request: Request) {
   try {
     // Rate limit: 5 signups per IP per 15 minutes
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = getClientIp(request.headers);
     const { allowed } = rateLimit(`signup:${ip}`, 5, 15 * 60 * 1000);
     if (!allowed) {
       return NextResponse.json(

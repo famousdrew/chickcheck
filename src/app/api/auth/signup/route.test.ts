@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { POST } from "./route";
 import * as userService from "@/lib/services/users";
+import { resetRateLimits } from "@/lib/rate-limit";
 
 // Mock user service
 vi.mock("@/lib/services/users", () => ({
@@ -11,6 +12,7 @@ vi.mock("@/lib/services/users", () => ({
 describe("POST /api/auth/signup", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetRateLimits();
   });
 
   it("should create a new user successfully", async () => {
@@ -145,5 +147,27 @@ describe("POST /api/auth/signup", () => {
 
     expect(response.status).toBe(500);
     expect(data.error).toBe("Something went wrong. Please try again.");
+  });
+
+  it("should return 429 after too many attempts from the same IP", async () => {
+    vi.mocked(userService.findUserByEmail).mockResolvedValue(null);
+
+    const makeRequest = () =>
+      new Request("http://localhost/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-forwarded-for": "203.0.113.7",
+        },
+        body: JSON.stringify({ email: "bad", password: "password123" }),
+      });
+
+    for (let i = 0; i < 5; i++) {
+      const response = await POST(makeRequest());
+      expect(response.status).toBe(400);
+    }
+
+    const response = await POST(makeRequest());
+    expect(response.status).toBe(429);
   });
 });

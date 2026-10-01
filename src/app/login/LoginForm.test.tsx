@@ -78,6 +78,26 @@ describe("LoginForm", () => {
     });
   });
 
+  it("should show a rate limit message when too many attempts were made", async () => {
+    const user = userEvent.setup();
+    mockSignIn.mockResolvedValue({
+      error: "CredentialsSignin",
+      code: "rate_limited",
+    });
+
+    render(<LoginForm />);
+
+    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(/password/i), "password123");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/too many sign-in attempts/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   it("should show loading state during submission", async () => {
     const user = userEvent.setup();
     mockSignIn.mockImplementation(
