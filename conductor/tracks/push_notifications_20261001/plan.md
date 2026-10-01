@@ -3,7 +3,7 @@
 ## Track Overview
 - **Track ID:** push_notifications_20261001
 - **Type:** Feature
-- **Status:** In Progress
+- **Status:** Complete (pending deploy: prisma db push + VAPID keys)
 
 ---
 
@@ -64,7 +64,7 @@ Send the right reminders at the right time, exactly once.
 
 ---
 
-## Phase 4: Docs & Verification
+## Phase 4: Docs & Verification ✅
 
-- [ ] Task: Document env vars (.env.example, CLAUDE.md)
-- [ ] Task: Full test suite, type check, lint, production build
+- [x] Task: Document env vars (.env.example, CLAUDE.md)
+- [x] Task: Full test suite, type check, lint, production build
