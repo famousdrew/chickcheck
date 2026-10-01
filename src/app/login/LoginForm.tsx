@@ -9,6 +9,7 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered") === "true";
+  const passwordReset = searchParams.get("reset") === "true";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,6 +62,12 @@ export default function LoginForm() {
         </div>
       )}
 
+      {passwordReset && (
+        <div className="rounded-rustic bg-grass-500/10 text-grass-500 mb-4 p-3 text-sm">
+          Your password has been reset. Please sign in.
+        </div>
+      )}
+
       {error && (
         <div className="rounded-rustic bg-barn-500/10 text-barn-500 mb-4 p-3 text-sm">
           {error}
@@ -102,6 +109,14 @@ export default function LoginForm() {
             className="rounded-rustic border-wood-dark/20 focus:border-grass-500 focus:ring-grass-500/20 w-full border px-4 py-2 focus:ring-2 focus:outline-none"
             placeholder="Your password"
           />
+          <div className="mt-1 text-right">
+            <Link
+              href="/forgot-password"
+              className="text-wood-dark/60 hover:text-grass-500 text-sm hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
         <button

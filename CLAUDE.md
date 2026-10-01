@@ -37,6 +37,7 @@ ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during th
 - Build command: `prisma generate && next build --webpack`
 - Start command: `npm run start`
 - If schema changes, run: `DATABASE_URL="<railway_url>" npx prisma db push`
+- Password reset emails go through Resend (`RESEND_API_KEY`, `EMAIL_FROM`); without a key the reset link is logged to the server console - see `src/lib/email.ts`
 
 ## Known Issues / Future Work
 

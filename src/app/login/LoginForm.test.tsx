@@ -23,6 +23,7 @@ describe("LoginForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchParams.delete("registered");
+    mockSearchParams.delete("reset");
   });
 
   it("should render login form", () => {
@@ -129,6 +130,23 @@ describe("LoginForm", () => {
 
     expect(
       screen.getByText(/account created successfully/i)
+    ).toBeInTheDocument();
+  });
+
+  it("should link to the forgot password page", () => {
+    render(<LoginForm />);
+
+    expect(
+      screen.getByRole("link", { name: /forgot password/i })
+    ).toHaveAttribute("href", "/forgot-password");
+  });
+
+  it("should confirm when the password was just reset", () => {
+    mockSearchParams.set("reset", "true");
+    render(<LoginForm />);
+
+    expect(
+      screen.getByText(/your password has been reset/i)
     ).toBeInTheDocument();
   });
 });
