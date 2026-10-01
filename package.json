@@ -19,7 +19,8 @@
     "test:coverage": "vitest run --coverage",
     "prepare": "husky",
     "db:seed": "tsx prisma/seed.ts",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
