@@ -28,22 +28,22 @@ Store push subscriptions and reminder preferences, and be able to send a push.
 
 ---
 
-## Phase 2: Service Worker & Client Subscription
+## Phase 2: Service Worker & Client Subscription ✅
 
 ### Objective
 Let users turn push on per device and manage reminder settings.
 
-- [ ] Task: Service worker push handler (src/worker/index.ts)
-    - [ ] Show notification on push
-    - [ ] Focus or open the dashboard on click
-- [ ] Task: usePushSubscription hook
-    - [ ] Write tests
-    - [ ] Detect support, subscribe/unsubscribe, sync with server
-- [ ] Task: UI
-    - [ ] Update "Enable reminders?" prompt to subscribe to push
-    - [ ] Reminder settings panel from the dashboard header
-    - [ ] iOS "Add to Home Screen" hint when push is unavailable
-    - [ ] Only run in-tab reminders when the device is not push-subscribed
+- [x] Task: Service worker push handler (worker/index.ts, bundled by next-pwa)
+    - [x] Show notification on push
+    - [x] Focus or open the dashboard on click
+- [x] Task: usePushSubscription hook
+    - [x] Write tests
+    - [x] Detect support, subscribe/unsubscribe, sync with server
+- [x] Task: UI
+    - [x] Update "Enable reminders?" prompt to subscribe to push
+    - [x] Reminder settings panel from the dashboard header
+    - [x] iOS "Add to Home Screen" hint when push is unavailable
+    - [x] Only run in-tab reminders when the device is not push-subscribed
 
 ---
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useNotifications } from "./useNotifications";
+import { hasActivePushSubscription } from "./usePushSubscription";
 
 const REMINDER_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours
 const LAST_REMINDER_KEY = "chickcheck-last-reminder";
@@ -16,6 +17,7 @@ interface UseTaskReminderOptions {
 /**
  * Periodically sends browser notifications about pending/overdue tasks
  * while the app tab is open. Fires at most once per REMINDER_INTERVAL.
+ * Skipped on devices subscribed to push reminders.
  */
 export function useTaskReminder({
   flockId,
@@ -37,8 +39,10 @@ export function useTaskReminder({
       return Date.now() - parseInt(lastReminder, 10) > REMINDER_INTERVAL;
     }
 
-    function checkAndNotify() {
+    async function checkAndNotify() {
       if (!shouldRemind()) return;
+      // Push reminders already cover this device
+      if (await hasActivePushSubscription()) return;
 
       const total = pendingCount + overdueCount;
       if (total === 0) return;

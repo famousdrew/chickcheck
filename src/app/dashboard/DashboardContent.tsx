@@ -8,6 +8,7 @@ import JourneyOverview from "./JourneyOverview";
 import TaskList from "./TaskList";
 import ChickGallery from "./ChickGallery";
 import SignOutButton from "./SignOutButton";
+import ReminderSettingsModal from "./ReminderSettingsModal";
 
 interface Flock {
   id: string;
@@ -34,6 +35,7 @@ export default function DashboardContent({
   email,
 }: DashboardContentProps) {
   const [showCreateNew, setShowCreateNew] = useState(false);
+  const [showReminders, setShowReminders] = useState(false);
   const [activeFlockId, setActiveFlockId] = useState<string>(() => {
     // Try stored preference, fall back to first flock
     const stored = getStoredFlockId();
@@ -79,6 +81,28 @@ export default function DashboardContent({
             <span className="text-wood-dark/70 hidden text-sm sm:inline">
               {email}
             </span>
+            {flocks.length > 0 && (
+              <button
+                onClick={() => setShowReminders(true)}
+                className="text-wood-dark/60 hover:text-wood-dark rounded-rustic p-1.5 transition-colors"
+                aria-label="Reminder settings"
+                title="Reminders"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+              </button>
+            )}
             <SignOutButton />
           </div>
         </div>
@@ -127,6 +151,11 @@ export default function DashboardContent({
           </div>
         ) : null}
       </main>
+
+      <ReminderSettingsModal
+        isOpen={showReminders}
+        onClose={() => setShowReminders(false)}
+      />
     </>
   );
 }
