@@ -1,5 +1,9 @@
 import { auth } from "@/lib/auth";
-import { findFlockById, calculateCurrentDay } from "@/lib/services/flocks";
+import {
+  findFlockById,
+  calculateCurrentDay,
+  getEffectiveCurrentWeek,
+} from "@/lib/services/flocks";
 import { findTasksByWeek } from "@/lib/services/tasks";
 import {
   findCompletionsByFlockAndDate,
@@ -38,13 +42,10 @@ export const GET = withErrorHandler(
     const weekParam = searchParams.get("week");
 
     // Determine current week and day based on flock start date
-    let currentWeek = flock.currentWeek;
-    let currentDay = 0;
-
-    if (flock.startDate) {
-      currentDay = calculateCurrentDay(flock.startDate);
-      currentWeek = Math.min(Math.floor((currentDay - 1) / 7) + 1, 8);
-    }
+    const currentWeek = getEffectiveCurrentWeek(flock);
+    const currentDay = flock.startDate
+      ? calculateCurrentDay(flock.startDate)
+      : 0;
 
     const week = weekParam ? parseInt(weekParam, 10) : currentWeek;
     const tasks = await findTasksByWeek(week);
