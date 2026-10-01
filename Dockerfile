@@ -34,8 +34,10 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
-# Copy Prisma schema and generate client
+# Copy Prisma schema and config (the config supplies DATABASE_URL to the
+# CLI, which the pre-deploy `prisma db push` needs), then generate client
 COPY prisma ./prisma/
+COPY prisma.config.mjs ./
 RUN npx prisma generate
 
 # Copy built app from builder

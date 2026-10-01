@@ -39,7 +39,7 @@ ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during th
 
 ## Deployment Notes
 
-- Railway auto-deploys from `main` branch on GitHub
+- Railway auto-deploys from `main` branch on GitHub, building from the `Dockerfile`. Its final stage only has the files it copies explicitly - add anything needed at runtime or pre-deploy there (e.g. `prisma.config.mjs`)
 - Build command: `prisma generate && next build --webpack`
 - Start command: `npm run start`
 - Schema changes are applied automatically: `railway.toml` runs `npx prisma db push` as a pre-deploy command. It refuses data-losing changes, which fail the deploy; apply those by hand with `railway run npx prisma db push --accept-data-loss` after checking what will be dropped
