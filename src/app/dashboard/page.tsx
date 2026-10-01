@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { findFlocksByUserId } from "@/lib/services/flocks";
+import {
+  findFlocksByUserId,
+  getEffectiveCurrentWeek,
+} from "@/lib/services/flocks";
 import DashboardContent from "./DashboardContent";
 import OfflineIndicator from "@/components/OfflineIndicator";
 
@@ -20,7 +23,7 @@ export default async function DashboardPage() {
     name: f.name,
     status: f.status,
     startDate: f.startDate?.toISOString() ?? null,
-    currentWeek: f.currentWeek,
+    currentWeek: getEffectiveCurrentWeek(f),
   }));
 
   return (

@@ -78,7 +78,22 @@ export function calculateCurrentWeek(startDate: Date): number {
   const diffDays = Math.floor(
     (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
   );
-  return Math.min(Math.floor(diffDays / 7) + 1, 8);
+  return Math.min(Math.max(Math.floor(diffDays / 7) + 1, 1), 8);
+}
+
+/**
+ * The week a flock is on right now (0 = preparation, 1-8 once started).
+ * Started flocks derive it from startDate so it advances automatically;
+ * the stored currentWeek column is only meaningful before the flock starts.
+ */
+export function getEffectiveCurrentWeek(flock: {
+  startDate: Date | null;
+  currentWeek: number;
+}): number {
+  if (!flock.startDate) {
+    return flock.currentWeek;
+  }
+  return calculateCurrentWeek(flock.startDate);
 }
 
 export function calculateCurrentDay(startDate: Date): number {

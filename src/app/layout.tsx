@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   title: "ChickCheck - Baby Chick Care Guide",
   description: "Your 8-week guide to raising healthy, happy chicks",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

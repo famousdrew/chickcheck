@@ -23,6 +23,7 @@ describe("LoginForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchParams.delete("registered");
+    mockSearchParams.delete("reset");
   });
 
   it("should render login form", () => {
@@ -78,6 +79,26 @@ describe("LoginForm", () => {
     });
   });
 
+  it("should show a rate limit message when too many attempts were made", async () => {
+    const user = userEvent.setup();
+    mockSignIn.mockResolvedValue({
+      error: "CredentialsSignin",
+      code: "rate_limited",
+    });
+
+    render(<LoginForm />);
+
+    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(/password/i), "password123");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/too many sign-in attempts/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   it("should show loading state during submission", async () => {
     const user = userEvent.setup();
     mockSignIn.mockImplementation(
@@ -109,6 +130,23 @@ describe("LoginForm", () => {
 
     expect(
       screen.getByText(/account created successfully/i)
+    ).toBeInTheDocument();
+  });
+
+  it("should link to the forgot password page", () => {
+    render(<LoginForm />);
+
+    expect(
+      screen.getByRole("link", { name: /forgot password/i })
+    ).toHaveAttribute("href", "/forgot-password");
+  });
+
+  it("should confirm when the password was just reset", () => {
+    mockSearchParams.set("reset", "true");
+    render(<LoginForm />);
+
+    expect(
+      screen.getByText(/your password has been reset/i)
     ).toBeInTheDocument();
   });
 });

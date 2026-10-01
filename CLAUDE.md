@@ -23,6 +23,11 @@ ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during th
    - Notes/observations per chick
    - Timeline view (photos + notes interleaved by date)
 
+3. **Push Reminders**
+   - Web Push (VAPID) morning/evening reminders, per-user times (Pacific)
+   - Service worker push handler in `worker/index.ts` (bundled by next-pwa)
+   - Reminder job in `src/lib/reminders/`, run every 15 min by `src/instrumentation.ts`
+
 ## Important Files
 
 - `src/app/dashboard/` - Main dashboard components
@@ -30,13 +35,16 @@ ChickCheck is a Progressive Web App (PWA) for tracking baby chick care during th
 - `src/lib/utils/storage.ts` - Vercel Blob upload utilities
 - `src/lib/utils/timezone.ts` - Pacific timezone helpers
 - `prisma/schema.prisma` - Database schema
+- `prisma/seed-data.ts` - Task content, based on the original care guide in `docs/raising-chicks-8-week-checklist.rtf`
 
 ## Deployment Notes
 
 - Railway auto-deploys from `main` branch on GitHub
 - Build command: `prisma generate && next build --webpack`
 - Start command: `npm run start`
-- If schema changes, run: `DATABASE_URL="<railway_url>" npx prisma db push`
+- Schema changes are applied automatically: `railway.toml` runs `npx prisma db push` as a pre-deploy command. It refuses data-losing changes, which fail the deploy; apply those by hand with `railway run npx prisma db push --accept-data-loss` after checking what will be dropped
+- Push reminders need `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` (generate with `npm run vapid`); without them push is hidden and in-tab reminders are used
+- Password reset emails go through Resend (`RESEND_API_KEY`, `EMAIL_FROM`); without a key the reset link is logged to the server console - see `src/lib/email.ts`
 
 ## Known Issues / Future Work
 

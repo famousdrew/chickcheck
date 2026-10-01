@@ -9,6 +9,13 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}"],
+    server: {
+      deps: {
+        // next-auth imports "next/server" without an extension, which only
+        // resolves when Vite processes the package instead of Node
+        inline: ["next-auth"],
+      },
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

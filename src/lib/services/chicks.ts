@@ -116,6 +116,18 @@ export async function deleteChickPhoto(id: string) {
   });
 }
 
+/**
+ * All stored image URLs (full size and thumbnail) for every chick in a flock.
+ * Used to clean up blob storage when a flock is deleted.
+ */
+export async function findPhotoUrlsByFlockId(flockId: string) {
+  const photos = await prisma.chickPhoto.findMany({
+    where: { chick: { flockId } },
+    select: { imageUrl: true, thumbnailUrl: true },
+  });
+  return photos.flatMap((p) => [p.imageUrl, p.thumbnailUrl]);
+}
+
 export async function countPhotosByChickId(chickId: string) {
   return prisma.chickPhoto.count({
     where: { chickId },

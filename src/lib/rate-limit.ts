@@ -38,3 +38,17 @@ export function rateLimit(
   entry.count++;
   return { allowed: true, remaining: limit - entry.count };
 }
+
+/**
+ * Best-effort client IP from proxy headers (Railway sets x-forwarded-for).
+ */
+export function getClientIp(headers: Headers): string {
+  return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+/**
+ * Clear all rate limit state. Intended for tests.
+ */
+export function resetRateLimits(): void {
+  requests.clear();
+}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
 
 function isTooEarlyForPrompt(): boolean {
   if (typeof window === "undefined") return true;
@@ -16,21 +17,33 @@ function isTooEarlyForPrompt(): boolean {
 export default function NotificationPrompt() {
   const { supported, permission, requestPermission, isDismissed, dismiss } =
     useNotifications();
+  const push = usePushSubscription();
   const [isHidden, setIsHidden] = useState(false);
   const [tooEarly] = useState(isTooEarlyForPrompt);
 
-  // Don't show if: not supported, already granted/denied, dismissed, hidden, or too early
-  if (
-    !supported ||
-    permission !== "default" ||
-    isDismissed() ||
-    isHidden ||
-    tooEarly
-  ) {
+  if (push.status === "loading" || isDismissed() || isHidden || tooEarly) {
+    return null;
+  }
+
+  // Push works here: offer real reminders (also upgrades in-tab-only users)
+  const offerPush = push.status === "unsubscribed";
+  const offerInstall = push.status === "ios-needs-install";
+  // No push: fall back to in-tab notifications
+  const offerInTab =
+    (push.status === "disabled" || push.status === "unsupported") &&
+    supported &&
+    permission === "default";
+
+  if (!offerPush && !offerInstall && !offerInTab) {
     return null;
   }
 
   async function handleEnable() {
+    if (offerPush) {
+      // Stay visible on failure so the error can be shown
+      if (await push.subscribe()) setIsHidden(true);
+      return;
+    }
     await requestPermission();
     setIsHidden(true);
   }
@@ -39,6 +52,12 @@ export default function NotificationPrompt() {
     dismiss();
     setIsHidden(true);
   }
+
+  const description = offerPush
+    ? "Get a nudge each morning and evening about your chicks' care tasks, even when ChickCheck is closed."
+    : offerInstall
+      ? "To get reminders on iPhone or iPad, tap the Share button, choose “Add to Home Screen”, then open ChickCheck from your Home Screen."
+      : "Get notified about pending chick care tasks while the app is open.";
 
   return (
     <div className="rounded-rustic shadow-rustic border-grass-500/20 bg-grass-500/5 border p-4">
@@ -60,16 +79,19 @@ export default function NotificationPrompt() {
           <p className="text-wood-dark text-sm font-medium">
             Enable reminders?
           </p>
-          <p className="text-wood-dark/60 mt-0.5 text-xs">
-            Get notified about pending chick care tasks while the app is open.
-          </p>
+          <p className="text-wood-dark/60 mt-0.5 text-xs">{description}</p>
+          {push.error && (
+            <p className="text-barn-500 mt-1 text-xs">{push.error}</p>
+          )}
           <div className="mt-2 flex gap-2">
-            <button
-              onClick={handleEnable}
-              className="bg-grass-500 hover:bg-grass-500/90 rounded-rustic px-3 py-1 text-xs font-medium text-white transition-colors"
-            >
-              Enable
-            </button>
+            {!offerInstall && (
+              <button
+                onClick={handleEnable}
+                className="bg-grass-500 hover:bg-grass-500/90 rounded-rustic px-3 py-1 text-xs font-medium text-white transition-colors"
+              >
+                Enable
+              </button>
+            )}
             <button
               onClick={handleDismiss}
               className="text-wood-dark/50 hover:text-wood-dark text-xs transition-colors"

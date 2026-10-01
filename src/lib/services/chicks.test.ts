@@ -42,6 +42,7 @@ import {
   findPhotosByChickId,
   deleteChickPhoto,
   countPhotosByChickId,
+  findPhotoUrlsByFlockId,
   createChickNote,
   findChickNoteById,
   findNotesByChickId,
@@ -422,6 +423,34 @@ describe("ChickNote Service", () => {
       const result = await countNotesByChickId("chick-123");
 
       expect(result).toBe(3);
+    });
+  });
+
+  describe("findPhotoUrlsByFlockId", () => {
+    it("should return image and thumbnail URLs for all photos in the flock", async () => {
+      vi.mocked(prisma.chickPhoto.findMany).mockResolvedValue([
+        {
+          imageUrl: "https://blob/a.jpg",
+          thumbnailUrl: "https://blob/a-thumb.jpg",
+        },
+        {
+          imageUrl: "https://blob/b.jpg",
+          thumbnailUrl: "https://blob/b-thumb.jpg",
+        },
+      ] as never);
+
+      const urls = await findPhotoUrlsByFlockId("flock-1");
+
+      expect(prisma.chickPhoto.findMany).toHaveBeenCalledWith({
+        where: { chick: { flockId: "flock-1" } },
+        select: { imageUrl: true, thumbnailUrl: true },
+      });
+      expect(urls).toEqual([
+        "https://blob/a.jpg",
+        "https://blob/a-thumb.jpg",
+        "https://blob/b.jpg",
+        "https://blob/b-thumb.jpg",
+      ]);
     });
   });
 });

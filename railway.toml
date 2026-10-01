@@ -2,6 +2,10 @@
 builder = "nixpacks"
 
 [deploy]
+# Sync the database schema before each deploy. Runs in the built image with
+# the service's env vars. db push refuses changes that would lose data, so a
+# destructive schema change fails the deploy instead of dropping anything.
+preDeployCommand = ["npx prisma db push"]
 startCommand = "npm run start"
 healthcheckPath = "/"
 healthcheckTimeout = 300
