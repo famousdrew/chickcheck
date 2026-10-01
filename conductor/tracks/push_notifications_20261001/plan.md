@@ -7,24 +7,24 @@
 
 ---
 
-## Phase 1: Data Model & Push Infrastructure
+## Phase 1: Data Model & Push Infrastructure ✅
 
 ### Objective
 Store push subscriptions and reminder preferences, and be able to send a push.
 
-- [ ] Task: Add schema
-    - [ ] PushSubscription model (endpoint, keys, user relation)
-    - [ ] Reminder preference fields on User (morning/evening on + hour)
-    - [ ] ReminderLog model with unique (userId, kind, dayDate)
-- [ ] Task: Push sending service (src/lib/push.ts)
-    - [ ] Write tests: VAPID config detection, send, expired subscription cleanup
-    - [ ] Implement with the web-push package
-    - [ ] Script to generate VAPID keys (npm run vapid)
-- [ ] Task: Subscription & preferences API
-    - [ ] Write tests
-    - [ ] GET /api/push/config - public key + whether push is enabled
-    - [ ] POST/DELETE /api/push/subscriptions - save/remove this device
-    - [ ] GET/PATCH /api/reminder-settings - read/update preferences
+- [x] Task: Add schema
+    - [x] PushSubscription model (endpoint, keys, user relation)
+    - [x] ReminderSettings model, one row per user (morning/evening on + hour)
+    - [x] ReminderLog model with unique (userId, kind, dayDate)
+- [x] Task: Push sending service (src/lib/push.ts)
+    - [x] Write tests: VAPID config detection, send, expired subscription cleanup
+    - [x] Implement with the web-push package
+    - [x] Script to generate VAPID keys (npm run vapid)
+- [x] Task: Subscription & preferences API
+    - [x] Write tests
+    - [x] GET /api/push/config - public key + whether push is enabled
+    - [x] POST/DELETE /api/push/subscriptions - save/remove this device
+    - [x] GET/PATCH /api/reminder-settings - read/update preferences
 
 ---
 
